@@ -77,9 +77,12 @@
                 {/if}
             {/if}
             <br />
-            <p class="tarifa">{l s='Delivery price: ' mod='seur'}{Tools::displayPrice((float)$delivery_price)|escape:'htmlall':'UTF-8'}
-                <img id="btnDesgloseCosteEnvio" src="{$path|escape:'htmlall':'UTF-8'}img/unknown.png" alt="{l s='Distribution of the cost' mod='seur'}" title="{l s='Distribution of the cost' mod='seur'}" />
-            </p>
+            <p class="tarifa">
+                <img id="btnDesgloseCosteEnvio" src="{$path|escape:'htmlall':'UTF-8'}img/unknown.png" alt="{l s='Distribution of the cost' mod='seur'}" title="{l s='Distribution of the cost' mod='seur'}" /><br/>
+				{l s='Delivery SEUR price without tax: ' mod='seur'} {Tools::displayPrice((float)$delivery_price_tax_excl)|escape:'htmlall':'UTF-8'}<br/>
+				{l s='Delivery SEUR total width tax: ' mod='seur'} {Tools::displayPrice((float)$delivery_price)|escape:'htmlall':'UTF-8'}<br/>
+           
+			</p>
             <div id="loaderTarifa"></div>
             <div id="desgloseCosteEnvio">
             <table>
@@ -157,6 +160,6 @@
     <br />
     <fieldset id="detalleseur">
         <legend><img src="{$path|escape:'htmlall':'UTF-8'}img/logonew_32.png" alt="{l s='SEUR' mod='seur'}" title="{l s='SEUR' mod='seur'}" border="0" /></legend>
-        {include file=$smarty.const._PS_MODULE_DIR_|escape:'htmlall':'UTF-8'|cat:'seur/views/templates/admin/warning_message.tpl' seur_warning_message=$configuration_warning_message|escape:'htmlall':'UTF-8'}
+        {include file=$smarty.const._PS_MODULE_DIR_|escape:'htmlall':'UTF-8'|cat:'seur/views/templates/admin/warning_message.tpl' seur_warning_message=$configuration_warning_message}
     </fieldset>
 {/if}

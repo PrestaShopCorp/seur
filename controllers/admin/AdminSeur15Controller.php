@@ -67,6 +67,10 @@ class AdminSeur15Controller extends ModuleAdminController {
 			$response = Expedition::getExpeditions($admin_seur->getExpeditionData());
 			$this->tpl_view_vars = array('datos' => $admin_seur->displayFormDeliveries($response, false));
 		}
+		elseif(Tools::getValue('generateLabel'))
+		{
+			$admin_seur->printLabels(Tools::getValue('id_orders',array()),'txt');
+		}
 		else
 			$this->tpl_view_vars = array('datos' => $admin_seur->displayFormDeliveries());
 

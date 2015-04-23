@@ -535,42 +535,42 @@ class AdminSeur extends AdminTab {
 	}
 	public function getAllOrders($id = null, $reference = null, $date_start = null, $date_end = null, $name = null, $address = null, $postal_code = null, $city  = null, $state_name = null, $country = null)
 	{
-		$sql = 'SELECT o.reference,o.id_order,o.date_add,o.reference, a.firstname, a.lastname, a.address1, a.address2, a.postcode, a.city, cl.name as country, s.name as state FROM '._DB_PREFIX_.'orders o INNER JOIN '._DB_PREFIX_.'seur_order so ON so.id_order  = o.id_order  INNER JOIN '._DB_PREFIX_.'address a ON o.id_address_delivery = a.id_address INNER JOIN '._DB_PREFIX_.'country_lang cl ON cl.id_country = a.id_country AND cl.id_lang ='.$this->context->language->id.' LEFT JOIN '._DB_PREFIX_.'state s ON s.id_state = a.id_state ';
+		$sql = 'SELECT o.reference,o.id_order,o.date_add,o.reference, a.firstname, a.lastname, a.address1, a.address2, a.postcode, a.city, cl.name as country, s.name as state FROM '._DB_PREFIX_.'orders o INNER JOIN '._DB_PREFIX_.'seur_order so ON so.id_order  = o.id_order  INNER JOIN '._DB_PREFIX_.'address a ON o.id_address_delivery = a.id_address INNER JOIN '._DB_PREFIX_.'country_lang cl ON cl.id_country = a.id_country AND cl.id_lang ='.(int)$this->context->language->id.' LEFT JOIN '._DB_PREFIX_.'state s ON s.id_state = a.id_state ';
 		$where = array();
 		if ((int)$id > 0)
-			$where[] = ' o.id_order ='.$id.' ';
+			$where[] = ' o.id_order ='.(int)$id.' ';
 		
 		if (trim($reference) != '')
-			$where[] = ' o.reference like \''.$reference.'\' ';
+			$where[] = ' o.reference like \''.pSQL($reference).'\' ';
 		
 		
 		if (trim($date_start) != '' && trim($date_end) != '' )
-			$where[] = ' o.date_add between \''.$date_start.'\' AND   \''.$date_end.'\' ';
+			$where[] = ' o.date_add between \''.pSQL($date_start).'\' AND   \''.pSQL($date_end).'\' ';
 			
 		if (trim($date_start) != '' && trim($date_end) == '' )
-			$where[] = ' o.date_add >= \''.$date_start.'\'  ';
+			$where[] = ' o.date_add >= \''.pSQL($date_start).'\'  ';
 			
 		if (trim($date_start) == '' && trim($date_end) != '' )
-			$where[] = ' o.date_add <= \''.$date_start.'\'  ';
+			$where[] = ' o.date_add <= \''.pSQL($date_start).'\'  ';
 			
 		if (trim($name) != ''  )
-			$where[] = ' ( a.firstname like = \'%'.$name.'%\'  OR a.lastname like = \'%'.$name.'%\'  )  ';
+			$where[] = ' ( a.firstname like = \'%'.pSQL($name).'%\'  OR a.lastname like = \'%'.pSQL($name).'%\'  )  ';
 		
 		if (trim($address) != ''  )
-			$where[] = ' ( a.address1 like = \'%'.$address.'%\'  OR a.address2 like = \'%'.$address.'%\'  )  ';
+			$where[] = ' ( a.address1 like = \'%'.pSQL($address).'%\'  OR a.address2 like = \'%'.pSQL($address).'%\'  )  ';
 		
 		
 		if (trim($postal_code) != ''  )
-			$where[] = ' a.post_code like = \'%'.$postal_code.'%\'   ';
+			$where[] = ' a.post_code like = \'%'.pSQL($postal_code).'%\'   ';
 		
 		if (trim($city) != ''  )
-			$where[] = ' a.city like = \'%'.$city.'%\'   ';
+			$where[] = ' a.city like = \'%'.pSQL($city).'%\'   ';
 		
 		if (trim($state_name) != ''  )
-			$where[] = ' a.state like = \'%'.$state_name.'%\'   ';
+			$where[] = ' a.state like = \'%'.pSQL($state_name).'%\'   ';
 		
 		if (trim($country) != ''  )
-			$where[] = ' a.country like = \'%'.$country.'%\'   ';
+			$where[] = ' a.country like = \'%'.pSQL($country).'%\'   ';
 		
 		if(!empty($where))
 			$sql.= ' WHERE '.implode(' AND ', $where);

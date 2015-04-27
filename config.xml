@@ -3,7 +3,7 @@
             <name>seur</name>
             <displayName><![CDATA[SEUR]]></displayName>
             <version><![CDATA[1.1]]></version>
-            <description><![CDATA[Administre sus env&iacute;os con SEUR. L&iacute;der en el Env&iacute;o Express, Nacional o Internacional.]]></description>
+            <description><![CDATA[Admin yor deliveries with SEUR. Express, National and International Courier Leader.]]></description>
             <author><![CDATA[www.lineagrafica.es]]></author>
             <tab><![CDATA[shipping_logistics]]></tab>
             <is_configurable>1</is_configurable>

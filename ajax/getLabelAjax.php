@@ -88,47 +88,47 @@ die();
 	function getQuery($id = null, $reference = null, $date_start = null, $date_end = null, $name = null, $address = null, $postal_code = null, $city  = null, $state_name = null, $country = null)
 	{
 		$context = Context::getContext();
-		$sql = 'SELECT o.reference,o.id_order,o.date_add,o.reference, a.firstname, a.lastname, a.address1, a.address2, a.postcode, a.city, cl.name as country, s.name as state FROM '._DB_PREFIX_.'orders o INNER JOIN '._DB_PREFIX_.'seur_order so ON so.id_order  = o.id_order  INNER JOIN '._DB_PREFIX_.'address a ON o.id_address_delivery = a.id_address INNER JOIN '._DB_PREFIX_.'country_lang cl ON cl.id_country = a.id_country AND cl.id_lang ='.$context->language->id.' LEFT JOIN '._DB_PREFIX_.'state s ON s.id_state = a.id_state ';
+		$sql = 'SELECT o.reference,o.id_order,o.date_add,o.reference, a.firstname, a.lastname, a.address1, a.address2, a.postcode, a.city, cl.name as country, s.name as state FROM '._DB_PREFIX_.'orders o INNER JOIN '._DB_PREFIX_.'seur_order so ON so.id_order  = o.id_order  INNER JOIN '._DB_PREFIX_.'address a ON o.id_address_delivery = a.id_address INNER JOIN '._DB_PREFIX_.'country_lang cl ON cl.id_country = a.id_country AND cl.id_lang ='.(int)$context->language->id.' LEFT JOIN '._DB_PREFIX_.'state s ON s.id_state = a.id_state ';
 		$where = array();
 		if ((int)$id > 0)
-			$where[] = ' o.id_order ='.$id.' ';
+			$where[] = ' o.id_order ='.(int)$id.' ';
 		
 		if (trim($reference) != '')
-			$where[] = ' o.reference like \'%'.$reference.'%\' ';
+			$where[] = ' o.reference like \'%'.pSQL($reference).'%\' ';
 		
 		
 		if (trim($date_start) != '' && trim($date_end) != '' )
-			$where[] = ' o.date_add between \''.date('y-m-d', strtotime($date_start)).'\' AND \''.date('y-m-d', strtotime($date_end." +1 days")).'\' ';
+			$where[] = ' o.date_add between \''.date('y-m-d', strtotime(pSQL($date_start))).'\' AND \''.date('y-m-d', strtotime(pSQL($date_end)." +1 days")).'\' ';
 			
 		if (trim($date_start) != '' && trim($date_end) == '' )
-			$where[] = ' o.date_add >= \''.date('y-m-d', strtotime($date_start)).'\'  ';
+			$where[] = ' o.date_add >= \''.date('y-m-d', strtotime(pSQL($date_start))).'\'  ';
 			
 		if (trim($date_start) == '' && trim($date_end) != '' )
-			$where[] = ' o.date_add <= \''.date('y-m-d', strtotime($date_end)).'\'  ';
+			$where[] = ' o.date_add <= \''.date('y-m-d', strtotime(pSQL($date_end))).'\'  ';
 			
 		if (trim($name) != ''  )
 		{
 			$terms = explode(' ',$name);
 			$firstname_where = implode('%\'  OR a.firstname like \'%', $terms);	
 			$lastname_where = implode('%\'  OR a.lastname like \'%',$terms);	
-			$where[] = ' ( a.firstname like \'%'.$firstname_where.'%\'  OR a.lastname like \'%'.$lastname_where.'%\'  )  ';
+			$where[] = ' ( a.firstname like \'%'.pSQL($firstname_where).'%\'  OR a.lastname like \'%'.pSQL($lastname_where).'%\'  )  ';
 		}
 		
 		if (trim($address) != ''  )
-			$where[] = ' ( a.address1 like \'%'.$address.'%\'  OR a.address2 like \'%'.$address.'%\'  )  ';
+			$where[] = ' ( a.address1 like \'%'.pSQL($address).'%\'  OR a.address2 like \'%'.pSQL($address).'%\'  )  ';
 		
 		
 		if (trim($postal_code) != ''  )
-			$where[] = ' a.postcode like \'%'.$postal_code.'%\'   ';
+			$where[] = ' a.postcode like \'%'.pSQL($postal_code).'%\'   ';
 		
 		if (trim($city) != ''  )
-			$where[] = ' a.city like \'%'.$city.'%\'   ';
+			$where[] = ' a.city like \'%'.pSQL($city).'%\'   ';
 		
 		if (trim($state_name) != ''  )
-			$where[] = ' s.name like \'%'.$state_name.'%\'   ';
+			$where[] = ' s.name like \'%'.pSQL($state_name).'%\'   ';
 		
 		if (trim($country) != ''  )
-			$where[] = ' cl.name like \'%'.$country.'%\'   ';
+			$where[] = ' cl.name like \'%'.pSQL($country).'%\'   ';
 		
 		if(!empty($where))
 			$sql.= ' WHERE '.implode(' AND ', $where);

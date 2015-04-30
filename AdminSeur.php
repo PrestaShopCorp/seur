@@ -115,8 +115,11 @@ class AdminSeur extends AdminTab {
 			$response = Expedition::getExpeditions($this->getExpeditionData());
 			$this->tpl_view_vars = array('datos' => $this->displayFormDeliveries($response, false));
 		}
-		else
-			$this->tpl_view_vars = array('datos' => $this->displayFormDeliveries());
+		elseif (Tools::getValue('generateLabel'))
+		{
+			$this->printLabels(Tools::getValue('id_orders',array()), 'txt');
+			die();			
+		}
 	}
 
 	public function getExpeditionData()
@@ -210,6 +213,11 @@ class AdminSeur extends AdminTab {
 			 	</legend>
 				<div id='seur_module' class='$ps_version'>
 					<ul class='configuration_menu'>
+					  ".((!SeurLib::getConfigurationField('print_type'))?"<li class='button btnTab".($tab_view == 'labels' ? ' active' : '' )."' tab='label'>
+							<img src='$img_dir/config.png' alt=".$this->module_instance->l('Label', self::FILENAME).' title='.$this->module_instance->l('Label', self::FILENAME).' />
+							'.$this->module_instance->l('Label', self::FILENAME)."
+						</li>":"")."
+						
 						<li class='button btnTab".($tab_view == 'deliveries' ? ' active' : '' )."' tab='deliveries'>
 							<img src='$img_dir/config.png' alt=".$this->module_instance->l('Shipments', self::FILENAME).' title='.$this->module_instance->l('Shipments', self::FILENAME).' />
 							'.$this->module_instance->l('Shipments', self::FILENAME)."
@@ -417,14 +425,368 @@ class AdminSeur extends AdminTab {
 						</tr>
 						</tbody>';
 		}
+		$start_date = Tools::getValue('start_date_order','');
+		$end_date = Tools::getValue('end_date_order','');
+		$reference = Tools::getValue('reference','');
+		$ID = Tools::getValue('ID','');
+		$firstname = Tools::getValue('firstname','');
+		$lastname = Tools::getValue('lastname','');
+		$address = Tools::getValue('address','');
+		$postcode = Tools::getValue('postcode','');
+		$city = Tools::getValue('city','');
+		$state = Tools::getValue('state','');
+		$country = Tools::getValue('country','');
+
 
 		$this->content .= '</thead>
 					</table>
 				</li>
-			</ul>
-		  </div>
+				<li id="label" '.( $tab_view == 'label' ? 'class="default"' : '' ).'>
+							<form action="index.php?controller='.$this->current_controller.'&generateLabel=1&token='.$token.$this->ps14_tab.'" method="post" target="_blank">
+					<!--<form action="index.php?controller='.$this->current_controller.'&submitFilter=1&token='.$token.$this->ps14_tab.'" method="post" id="formfilter" name="formfilter">
+						-->
+						<table id="labelTable" class="table" cellpadding="0" cellspacing="0" >
+							<thead>
+								<tr>
+											<th>'.$this->module_instance->l('ID', self::FILENAME).'</th>
+											<th>'.$this->module_instance->l('Reference number', self::FILENAME).'</th>
+											<th>'.$this->module_instance->l('Start Date', self::FILENAME).' / '.$this->module_instance->l('End Date', self::FILENAME).'</th>
+											<th>'.$this->module_instance->l('Name', self::FILENAME).'</th>
+											<th>'.$this->module_instance->l('Address', self::FILENAME).'</th>
+											<th>'.$this->module_instance->l('Postal code', self::FILENAME).'</th>
+											<th>'.$this->module_instance->l('City', self::FILENAME).'</th>
+											<th>'.$this->module_instance->l('State', self::FILENAME).'</th>
+											<th>'.$this->module_instance->l('Country', self::FILENAME).'</th>
+											<th>'.$this->module_instance->l('Printed label', self::FILENAME).'</th>
+											<th></th>
+								</tr>
+								<tr class="filtros">
+											<td><input class="ps14_input" type="text" name="id" value="'.$ID.'" autocomplete="off" /></td>
+											<td><input class="ps14_input" type="text" name="reference" value="'.$reference.'" autocomplete="off" /></td>
+											<td style="min-width:160px;"><span>'.$this->module_instance->l('Desde', self::FILENAME).'</span>&nbsp;<input class="datepicker" type="text" name="start_date_order" id="start_date_order" autocomplete="off" value="'.$start_date.'"/><br><span>'.$this->module_instance->l('Hasta', self::FILENAME).'</span>&nbsp;&nbsp;<input class="datepicker" type="text" name="end_date_order" id="end_date_order" autocomplete="off" value="'.$end_date.'"/></td>
+											<td><input class="ps14_input" type="text" name="name" id="firstname" autocomplete="off" value="'.$firstname.' '.$lastname.'"/></td>
+											<td><input class="ps14_input" type="text" name="address" id="address" autocomplete="off" value="'.$address.'"/></td>
+											<td><input class="ps14_input" type="text" name="postcode" id="postcode" autocomplete="off" value="'.$postcode.'"/></td>
+											<td><input class="ps14_input" type="text" name="city" id="city" autocomplete="off" value="'.$city.'"/></td>
+											<td><input class="ps14_input" type="text" name="state" id="state" autocomplete="off" value="'.$state.'"/></td>
+											<td><input class="ps14_input" type="text" name="country" id="couuntry" autocomplete="off" value="'.$country.'"/></td>
+											<td><input  type="checkbox"   id="printed_label" autocomplete="off" value=""/></td>
+											<td><a class="filter" id="labelsFilter">'.$this->module_instance->l('Filtrar', self::FILENAME).'</a></td>
+								</tr>
+							</thead>
+							<tbody>';
+								$orders = $this->getAllOrders();
+								if (is_array($orders))
+								{
+									foreach($orders as $order)
+										$this->content .= '<tr><td>'.$order['id_order'].'</td><td>'.$order['reference'].'</td><td>'.date('d-m-Y H:i:s', strtotime($order['date_add'])).'</td><td>'.$order['firstname'].' '.$order['lastname'].' </td><td>'.$order['address1'].' '.$order['address2'].' </td><td>'.$order['postcode'].' </td><td>'.$order['city'].' </td><td>'.$order['state'].' </td><td>'.$order['country'].' </td><td><input type="checkbox" name="id_orders[]" value="'.$order['id_order'].'"/></td><td></td></tr>';	
+								
+									 	$this->content .= '<tr><td colspan="10"></td><td colspan="1"><input  class="button btnTab" type="submit"  value="Imprimir etiqueta"></td></tr>';	
+								}
+						$this->content .= '</tbody>
+						</table>
+						<script type="text/javascript">
+							$(document).ready(function(){
+								
+									$(\'#printed_label\').live(\'click\',function(){
+											if($(this).is(\':checked\'))
+											{
+												$(\'input[name^=id_orders]\').attr(\'checked\',\'checked\');
+											}
+											else
+											{
+												$(\'input[name^=id_orders]\').removeAttr(\'checked\');
+											}
+										
+									
+									});
+								'.(version_compare(_PS_VERSION_, '1.6', '<')?'$(\'#start_date_order,#end_date_order,\').datepicker({ showAnim : \'slideDown\', dateFormat : \'dd-mm-yy\' , \'onSelect\': function(dateText, inst){$(this).trigger(\'change\')}});':'').'	
+								
+							
+								$(\'#labelsFilter\').click(function(){
+											params = {};
+										  $.each($(\'#labelTable .filtros input[type=text]\'), function(key, item){
+												params[item.name] = item.value;
+										  });
+										  $.ajax(
+												{
+													url: \''._MODULE_DIR_.'seur/ajax/getLabelAjax.php\',
+													data: params,
+													type: \'POST\',
+													async: true,
+													dataType: \'json\',
+													success: function (jsonData)
+													{
+														$(\'#labelTable tbody\').html(jsonData.response);
+													},
+											});
+								});							
+							});
+						</script>
+					</form>
+					</li>
+					</ul>
+				</div>
 	  </fieldset>
 
-	  </div>';
+	  </div>
+				';
+
 	}
+	public function getAllOrders($id = null, $reference = null, $date_start = null, $date_end = null, $name = null, $address = null, $postal_code = null, $city  = null, $state_name = null, $country = null)
+	{
+		$sql = 'SELECT o.reference,o.id_order,o.date_add,o.reference, a.firstname, a.lastname, a.address1, a.address2, a.postcode, a.city, cl.name as country, s.name as state FROM '._DB_PREFIX_.'orders o INNER JOIN '._DB_PREFIX_.'seur_order so ON so.id_order  = o.id_order  INNER JOIN '._DB_PREFIX_.'address a ON o.id_address_delivery = a.id_address INNER JOIN '._DB_PREFIX_.'country_lang cl ON cl.id_country = a.id_country AND cl.id_lang ='.(int)$this->context->language->id.' LEFT JOIN '._DB_PREFIX_.'state s ON s.id_state = a.id_state ';
+		$where = array();
+		if ((int)$id > 0)
+			$where[] = ' o.id_order ='.(int)$id.' ';
+		
+		if (trim($reference) != '')
+			$where[] = ' o.reference like \''.pSQL($reference).'\' ';
+		
+		
+		if (trim($date_start) != '' && trim($date_end) != '' )
+			$where[] = ' o.date_add between \''.pSQL($date_start).'\' AND   \''.pSQL($date_end).'\' ';
+			
+		if (trim($date_start) != '' && trim($date_end) == '' )
+			$where[] = ' o.date_add >= \''.pSQL($date_start).'\'  ';
+			
+		if (trim($date_start) == '' && trim($date_end) != '' )
+			$where[] = ' o.date_add <= \''.pSQL($date_start).'\'  ';
+			
+		if (trim($name) != ''  )
+			$where[] = ' ( a.firstname like = \'%'.pSQL($name).'%\'  OR a.lastname like = \'%'.pSQL($name).'%\'  )  ';
+		
+		if (trim($address) != ''  )
+			$where[] = ' ( a.address1 like = \'%'.pSQL($address).'%\'  OR a.address2 like = \'%'.pSQL($address).'%\'  )  ';
+		
+		
+		if (trim($postal_code) != ''  )
+			$where[] = ' a.post_code like = \'%'.pSQL($postal_code).'%\'   ';
+		
+		if (trim($city) != ''  )
+			$where[] = ' a.city like = \'%'.pSQL($city).'%\'   ';
+		
+		if (trim($state_name) != ''  )
+			$where[] = ' a.state like = \'%'.pSQL($state_name).'%\'   ';
+		
+		if (trim($country) != ''  )
+			$where[] = ' a.country like = \'%'.pSQL($country).'%\'   ';
+		
+		if(!empty($where))
+			$sql.= ' WHERE '.implode(' AND ', $where);
+			
+		$sql.= ' ORDER BY o.id_order DESC';
+		
+		return DB::getInstance()->executeS($sql);
+	
+	}
+	public function printLabels($id_orders = array(), $type = 'txt')
+	{
+		try
+		{
+				ob_end_clean();
+				header('Content-type: text/plain');
+				header('Content-Disposition: attachment; filename=seur_labels-'.date('Y-m-d h:i:s', strtotime('now')).'.txt');
+				header('Content-Transfer-Encoding: binary');
+				header('Accept-Ranges: bytes');
+		if(!is_array($id_orders)) $id_orders = (array) $id_orders;
+		$directory = _PS_MODULE_DIR_.'seur/files/deliveries_labels/';
+		if ($type == 'txt')
+		{
+
+				if(is_array($id_orders))
+				foreach ($id_orders as $id_order)
+				{
+					$name = sprintf('%06d', (int)$id_order);
+					if (!file_exists($directory.$name.'.txt') || !($fp = Tools::file_get_contents($directory.$name.'.txt')))
+					{
+									
+							$data_label = $this->getLabelData($id_order);
+							if (is_array($data_label))
+							{
+							
+								// if ($this->isPrinted((int)$id_order, true))
+								// {
+								// $success = true;
+								// }
+								// else
+								// {
+								// echo $name;
+								$success = Label::createLabels($data_label, 'zebra');
+								// }
+							
+								if ($success === true)
+								{
+								
+									// if ($this->setAsPrinted((int)$id_order, true))
+											// $this->printLabel((int)array($id_order), 'txt');
+									$this->setAsPrinted((int)$id_order, true);		
+								}
+						
+						}
+					
+					}
+				}
+			  if(is_array($id_orders))
+				foreach ($id_orders as $id_order)
+				{
+					$name = sprintf('%06d', (int)$id_order);
+			
+					if (file_exists($directory.$name.'.txt') && ($fp = Tools::file_get_contents($directory.$name.'.txt')))
+					{
+						
+						echo $fp;				
+					}
+				}
+		}
+		elseif ($type == 'pdf')
+		{
+			if (file_exists($directory.$name.'.pdf') && ($fp = Tools::file_get_contents($directory.$name.'.pdf')))
+			{
+				ob_end_clean();
+				header('Content-type: application/pdf');
+				header('Content-Disposition: inline; filename='.$name.'.pdf');
+				header('Content-Transfer-Encoding: binary');
+				header('Accept-Ranges: bytes');
+
+				echo $fp;
+			}
+		}
+		
+		}catch(Exception $e)
+		{
+		   echo $e->getMessage();
+		
+		}
+		exit;	
+		$this->context->smarty->assign('error', $this->l('Document was already printed, but is missing in module directory'));
+	}
+		private function isPrinted($id_order, $label = false)
+	{
+		$field = $label ? 'printed_label' : 'printed_pdf';
+
+		return DB::getInstance()->getValue('
+			SELECT `'.bqSQL($field).'`
+			FROM `'._DB_PREFIX_.'seur_order`
+			WHERE `id_order` = "'.(int)$id_order.'"
+		');
+	}
+	
+	private function setAsPrinted($id_order, $label = false)
+	{
+		$field = $label ? 'printed_label' : 'printed_pdf';
+
+		return DB::getInstance()->Execute('
+			UPDATE `'._DB_PREFIX_.'seur_order`
+			SET `'.bqSQL($field).'` = 1
+			WHERE `id_order` = "'.(int)$id_order.'"
+		');
+	}
+	private function getLabelData($id_order)
+	{
+					$label_data = false;
+					$cookie = $this->context->cookie;
+					$order = new Order($id_order);
+					$customer = new Customer($order->id_customer);
+					$address_delivery = new Address($order->id_address_delivery);
+					
+					$carrier_pos = SeurLib::getSeurCarrier('SEP');
+					$datospos = '';
+					$products = $order->getProductsDetail();
+					$order_weigth = 0;
+					foreach ($products as $product)
+							$order_weigth += (float)$product['product_weight'] * (float)$product['product_quantity'];
+
+					$order_weigth = ($order_weigth < 1.0 ? 1.0 : (float)$order_weigth);
+					$name = $address_delivery->firstname.' '.$address_delivery->lastname;
+					$direccion = $address_delivery->address1.' '.$address_delivery->address2;
+					$newcountry = new Country((int)$address_delivery->id_country, (int)$cookie->id_lang);
+					$iso_merchant = SeurLib::getMerchantField('country');
+					$iso_country = Country::getIsoById((int)$address_delivery->id_country);
+						if ($iso_country == 'PT')
+						{
+							$post_code = explode(' ', $address_delivery->postcode);
+							$post_code = $post_code[0];
+						}
+						else
+							$post_code = $address_delivery->postcode;
+
+						$international_orders = SeurLib::getConfigurationField('international_orders');
+						$date_calculate = strtotime('-14 day', strtotime(date('Y-m-d')));
+						$date_display = date('Y-m-d H:m:i', $date_calculate);
+				
+					if ((!$international_orders && !($iso_country == 'ES' || $iso_country == 'PT' || $iso_country == 'AD')))	
+					{
+						return false;
+					}
+					
+					$order_data = SeurLib::getSeurOrder((int)$order->id);
+					$response_post_code = Town::getTowns($post_code);
+					$order_weigth = ((float)$order_weigth != $order_data['peso_bultos'] ? (float)$order_data['peso_bultos'] : (float)$order_weigth);
+				
+					if ((int)$order->id_carrier == $carrier_pos['id'])
+					{
+						$datospos = SeurLib::getOrderPos((int)$order->id_cart);
+						if (!empty($datospos))
+						{
+							$label_data = array(
+								'pedido' => sprintf('%06d', (int)$order->id),
+								'total_bultos' => $order_data['numero_bultos'],
+								'total_kilos' => (float)$order_weigth,
+								'direccion_consignatario' => $direccion,
+								'consignee_town' => $datospos['city'],
+								'codPostal_consignatario' => $datospos['postal_code'],
+								'telefono_consignatario' => (!empty($address_delivery->phone_mobile) ? $address_delivery->phone_mobile : $address_delivery->phone),
+								'movil' => $address_delivery->phone_mobile,
+								'name' => $name,
+								'companyia' => $datospos['company'],
+								'email_consignatario' => Validate::isLoadedObject($customer) ? $customer->email : '',
+								'dni' => $address_delivery->dni,
+								'info_adicional' => $info_adicional_str,
+								'country' => $newcountry->name,
+								'iso' => $newcountry->iso_code,
+								'cod_centro' => $datospos['id_seur_pos'],
+								'iso_merchant' => $iso_merchant
+							);
+							$rate_data['cod_centro'] = $datospos['id_seur_pos'];
+						}
+					}
+					else
+					{
+						$label_data = array(
+						'pedido' => sprintf('%06d', (int)$order->id),
+						'total_bultos' => $order_data['numero_bultos'],
+						'total_kilos' => (float)$order_weigth,
+						'direccion_consignatario' => $direccion,
+						'consignee_town' => $address_delivery->city,
+						'codPostal_consignatario' => $post_code,
+						'telefono_consignatario' => (!empty($address_delivery->phone_mobile) ? $address_delivery->phone_mobile : $address_delivery->phone),
+						'movil' => $address_delivery->phone_mobile,
+						'name' => $name,
+						'companyia' => (!empty($address_delivery->company) ? $address_delivery->company : ''),
+						'email_consignatario' => Validate::isLoadedObject($customer) ? $customer->email : '',
+						'dni' => $address_delivery->dni,
+						'info_adicional' => $info_adicional_str,
+						'country' => $newcountry->name,
+						'iso' => $newcountry->iso_code,
+						'iso_merchant' => $iso_merchant,
+						'admin_dir' => utf8_encode(_PS_ADMIN_DIR_),
+						'id_employee' => $cookie->id_employee,
+						'token' => Tools::getAdminTokenLite('AdminOrders'),
+						'back' => $back
+					);
+					
+					}
+					if (strcmp($order->module, 'seurcashondelivery') == 0)
+					{
+						$label_data['reembolso'] = (float)$order_data['total_paid'];
+					}
+			
+					return $label_data;
+	
+	
+	}
+	
+	
+	
 }

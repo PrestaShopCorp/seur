@@ -37,7 +37,7 @@ class SeurCashOnDelivery extends PaymentModule{
 
 		$this->name = 'seurcashondelivery';
 		$this->tab = 'payments_gateways';
-		$this->version = '1.0';
+		$this->version = '1.1';
 		$this->author = 'www.lineagrafica.es';
 
 		$this->currencies = true;
@@ -191,9 +191,9 @@ class SeurCashOnDelivery extends PaymentModule{
 			return ;
 
 		$coste = (float)(abs($cart->getOrderTotal(true, Cart::BOTH)));
-		$cargo = number_format($this->getCargo($cart) , 2, '.', '');
+		$cargo = number_format($this->calculateCargo($cart) , 2, '.', '');
 		$vales = (float)(abs($cart->getOrderTotal(true, Cart::ONLY_DISCOUNTS)));
-		$total_con_cargo = $coste - $vales + $cargo;
+		$total_con_cargo = $coste + $cargo;
 
 		$this->context->smarty->assign(array(
 			'nbProducts' => $cart->nbProducts(),
@@ -226,12 +226,11 @@ class SeurCashOnDelivery extends PaymentModule{
 		$seur_carrier_sce = SeurLib::getSeurCarrier('SCE');
 
 		$cod_carriers = array($seur_carrier_scn['id'], $seur_carrier_sen['id'], $seur_carrier_sce['id']);
-
 		if (($country->iso_code == 'ES' || $country->iso_code == 'PT' || $country->iso_code == 'AD') &&
 		   in_array($params['cart']->id_carrier, $cod_carriers))
 		{
 			$cost = (float)(abs($params['cart']->getOrderTotal(true, Cart::BOTH)));
-			$cargo = number_format($this->getCargo($params['cart']), 2, '.', '');
+			$cargo = number_format($this->calculateCargo($params['cart']), 2, '.', '');
 			$total_con_cargo = (float)($cost + $cargo);
 
 			if (version_compare(_PS_VERSION_, "1.5", ">="))
@@ -307,7 +306,36 @@ class SeurCashOnDelivery extends PaymentModule{
 				return $this->display(__FILE__, 'views/templates/hook/confirmation.tpl');
     }
 
-	public function getCargo($cart, $check_id_currency = true)
+	public function getCargo($order, $check_id_currency = true)
+	{
+
+		if ((int)$order->id >0)
+		{
+			$sql = 'SELECT codfee FROM '._DB_PREFIX_.'seur_order WHERE id_order='.$order->id;
+			
+			return (float)Tools::ps_round((float)(float)DB::getInstance()->getValue($sql), 2);
+		}
+		return 0;
+	}
+	public function getTotalPaid($order)
+	{
+		if ((int)$order->id >0)
+		{
+			$sql = 'SELECT total_paid FROM '._DB_PREFIX_.'seur_order WHERE id_order='.$order->id;
+			
+			return (float)Tools::ps_round((float)(float)DB::getInstance()->getValue($sql), 2);
+		}
+		return 0;
+	}
+	public function updateTotalPaid($order,$total_paid)
+	{
+		if ((int)$order->id >0)
+		{
+			$sql = 'UPDATE '._DB_PREFIX_.'seur_order SET total_paid = '.$total_paid.' WHERE id_order='.$order->id;
+			Db::getInstance()->execute($sql);
+		}
+	}	
+	public function calculateCargo($cart, $check_id_currency = true)
 	{
  		$minimo = Configuration::get('SEUR_REMCAR_CARGO_MIN');
  		$minimo = str_replace(',','.',$minimo);
@@ -317,28 +345,31 @@ class SeurCashOnDelivery extends PaymentModule{
 
  		$total_carrito = (float)($cart->getOrderTotal(true, Cart::BOTH));
  		$porcentaje = Configuration::get('SEUR_REMCAR_CARGO');
- 		$porcentaje = str_replace(',','.',$porcentaje);
+ 	
+		$porcentaje = str_replace(',','.',$porcentaje);
 		$porcentaje = $porcentaje / 100;
  		$cargo = $total_carrito * $porcentaje;
 
  		if ($cargo < $minimo)
 			$cargo = $minimo;
 
- 		return (float)($cargo);
+ 		return (float)Tools::ps_round((float)$cargo, 2);;
 	}
+	
 
 	public function hookDisplayPDFInvoice($params)
 	{
 		$sql = "SELECT `id_cart`, `module` FROM `"._DB_PREFIX_."orders` WHERE `id_order` = ".(int)$params['object']->id_order;
 		$modulo=Db::getInstance()->executeS($sql);
 		if (strcmp($modulo[0]['module'], "seurcashondelivery")==0){
-			$this->smarty->assign('reembolso_cargo', number_format($this->getCargo(new Cart((int)$modulo[0]['id_cart'])) , 2, '.', ''));
+			$this->smarty->assign('reembolso_cargo', number_format($this->getCargo(new Order((int)$params['object']->id_order)) , 2, '.', ''));
 			if (version_compare(_PS_VERSION_, '1.5', '<'))
 				return $this->display($this->path, 'views/templates/hook/pdf.tpl');
 			else
 				return $this->display(__FILE__, 'views/templates/hook/pdf.tpl');
 		}
 	}
+
 
 	public function hookDisplayOrderDetail($params)
 	{
@@ -350,12 +381,12 @@ class SeurCashOnDelivery extends PaymentModule{
 		$modulo = Db::getInstance()->executeS($sql);
 		$modulo_name=$modulo[0]['module'];
 
-		$reembolso_cargo = number_format($this->getCargo(new Cart((int)$modulo[0]['id_cart'])) , 2, '.', '');
+		$reembolso_cargo = $this->getCargo($params['order']) ;
 		$order_currency = new Currency((int)$params['order']->id_currency);
 		$reembolso_cargo = Tools::convertPrice($reembolso_cargo, $order_currency);
 
 		$this->smarty->assign(array(
-			'reembolso_cargo' => $reembolso_cargo,
+			'reembolso_cargo' => (float)$reembolso_cargo,
 			'modulo' => $modulo_name
 		));
 		if (version_compare(_PS_VERSION_, '1.5', '<'))
@@ -371,16 +402,27 @@ class SeurCashOnDelivery extends PaymentModule{
 
 	public function hookDisplayAdminOrder($params)
 	{
-		if (!is_object($params['cart'])){
-			$order = new Order((int)$params['id_order']);
-			if ($order->id_cart > 0){ $params['cart'] = new Cart((int)$order->id_cart); }
-		}
-		if (!is_object($params['cart'])){ return(false); }
+		$order = new Order((int)Tools::getValue('id_order',0));
 		$sql = "SELECT `module` FROM `"._DB_PREFIX_."orders` WHERE `id_cart` = ".(int)$params['cart']->id;
 		$modulo = Db::getInstance()->executeS($sql);
 		$modulo = $modulo[0]['module'];
+		$total_paid = 0;
+		$save_OK = false;
+		if(Tools::isSubmit('total_paid_submit_seurcashondelivery'))
+		{
+			$total_paid = (float)Tools::getValue('total_paid_seurcashondelivery');
+			$this->updateTotalPaid($order,$total_paid);
+			$save_OK = true;
+		}
+		else
+		{
+			$total_paid = (float)$this->getTotalPaid($order);
+		}
+		// print_r($order);
 		$this->smarty->assign(array(
-			'reembolso_cargo' => number_format($this->getCargo($params['cart']) , 2, '.', ''),
+			'reembolso_cargo' => (float)$this->getCargo($order),
+			'total_paid_seurcashondelivery' => $total_paid,
+			'save_total_paid_seurcashondelivery_OK' => $save_OK,
 			'modulo' => $modulo
 		));
 		if (version_compare(_PS_VERSION_, '1.5', '<'))
@@ -398,7 +440,8 @@ class SeurCashOnDelivery extends PaymentModule{
 	public function validateOrderFORWEBS_v5($id_cart, $id_order_state, $amount_paid, $payment_method = 'Unknown', $message = NULL, $extraVars = array(), $currency_special = NULL, $dont_touch_amount = false, $secure_key = false, Shop $shop = null)
 	{
         $this->context->cart = new Cart($id_cart);
-        $cargo = number_format($this->getCargo($this->context->cart) , 2, '.', '');
+		
+        $cargo =Tools::ps_round((float)$this->calculateCargo($this->context->cart), 2);
         $this->context->customer = new Customer((int)$this->context->cart->id_customer);
 		$this->context->language = new Language((int)$this->context->cart->id_lang);
 		$this->context->shop = ($shop ? $shop : new Shop((int)$this->context->cart->id_shop));
@@ -471,7 +514,7 @@ class SeurCashOnDelivery extends PaymentModule{
 						$address = new Address($id_address);
 						$this->context->country = new Country((int)$address->id_country, (int)$this->context->cart->id_lang);
 					}
-
+				
 					$carrier = null;
 					if (!$this->context->cart->isVirtualCart() && isset($package['id_carrier']))
 					{
@@ -503,6 +546,7 @@ class SeurCashOnDelivery extends PaymentModule{
 					$order->gift = (int)$this->context->cart->gift;
 					$order->gift_message = $this->context->cart->gift_message;
 					$order->conversion_rate = $this->context->currency->conversion_rate;
+					
 					$amount_paid = !$dont_touch_amount ? Tools::ps_round((float)$amount_paid, 2) : $amount_paid;
 					$order->total_paid_real = 0;
 
@@ -512,25 +556,29 @@ class SeurCashOnDelivery extends PaymentModule{
 					$order->total_discounts_tax_excl = (float)abs($this->context->cart->getOrderTotal(false, Cart::ONLY_DISCOUNTS, $order->product_list, $id_carrier));
 					$order->total_discounts_tax_incl = (float)abs($this->context->cart->getOrderTotal(true, Cart::ONLY_DISCOUNTS, $order->product_list, $id_carrier));
 					$order->total_discounts = $order->total_discounts_tax_incl;
-
-					$order->total_shipping_tax_excl = (float)$this->context->cart->getPackageShippingCost((int)$id_carrier, false, null, $order->product_list);
-					$order->total_shipping_tax_incl = (float)$this->context->cart->getPackageShippingCost((int)$id_carrier, true, null, $order->product_list)+$cargo;
-					$order->total_shipping =  (float)$order->total_shipping_tax_incl;
-
 					if (!is_null($carrier) && Validate::isLoadedObject($carrier))
 						$order->carrier_tax_rate = $carrier->getTaxesRate(new Address($this->context->cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')}));
+
+					$cargo_neto = Tools::ps_round($cargo/((float)($order->carrier_tax_rate/100)+1),2);
+					$cargo_rate = Tools::ps_round(($cargo - $cargo_neto),2);
+					
+					
+					$order->total_shipping_tax_excl = Tools::ps_round(($this->context->cart->getPackageShippingCost((int)$id_carrier, false, null, $order->product_list)+$cargo_neto),2);
+					$order->total_shipping_tax_incl = Tools::ps_round(($this->context->cart->getPackageShippingCost((int)$id_carrier, true, null, $order->product_list)+$cargo),2);
+					$order->total_shipping =  $order->total_shipping_tax_incl;
+					
 
 					$order->total_wrapping_tax_excl = (float)abs($this->context->cart->getOrderTotal(false, Cart::ONLY_WRAPPING, $order->product_list, $id_carrier));
 					$order->total_wrapping_tax_incl = (float)abs($this->context->cart->getOrderTotal(true, Cart::ONLY_WRAPPING, $order->product_list, $id_carrier));
 					$order->total_wrapping =  (float)$order->total_wrapping_tax_incl;
 
-					$order->total_paid_tax_excl = (float)Tools::ps_round((float)$this->context->cart->getOrderTotal(false, Cart::BOTH, $order->product_list, $id_carrier), 2);
-					$order->total_paid_tax_incl = (float)Tools::ps_round((float)$this->context->cart->getOrderTotal(true, Cart::BOTH, $order->product_list, $id_carrier), 2)+$cargo;
+					$order->total_paid_tax_excl = (float)Tools::ps_round((float)($this->context->cart->getOrderTotal(false, Cart::BOTH, $order->product_list, $id_carrier)), 2)+$cargo_neto;
+					$order->total_paid_tax_incl = (float)Tools::ps_round((float)($this->context->cart->getOrderTotal(true, Cart::BOTH, $order->product_list, $id_carrier)), 2)+$cargo;
 					$order->total_paid =  (float)$order->total_paid_tax_incl;
+	
 
 					$order->invoice_date = '0000-00-00 00:00:00';
 					$order->delivery_date = '0000-00-00 00:00:00';
-
 					// Creating order
 					$result = $order->add();
 
@@ -542,8 +590,8 @@ class SeurCashOnDelivery extends PaymentModule{
 					// if ($order->total_paid != $order->total_paid_real)
 					// We use number_format in order to compare two string
                                         //if ($order_status->logable && number_format($order->total_paid, 2) != number_format($order->total_paid_real, 2))VERSION 1.4
-                                        if ($order_status->logable && number_format($cart_total_paid, 2) != (number_format($amount_paid-$cargo, 2)))
-						$id_order_state = Configuration::get('PS_OS_ERROR');
+                                        // if ($order_status->logable && number_format($cart_total_paid, 2) != (number_format($amount_paid-$cargo, 2)))
+						// $id_order_state = Configuration::get('PS_OS_ERROR');
 
 					$order_list[] = $order;
 
@@ -567,7 +615,7 @@ class SeurCashOnDelivery extends PaymentModule{
 						$order_carrier->add();
 					}
 				}
-
+			
 			// The country can only change if the address used for the calculation is the delivery address, and if multi-shipping is activated
 			if (Configuration::get('PS_TAX_ADDRESS_TYPE') == 'id_address_delivery')
 				$this->context->country = $context_country;
@@ -575,13 +623,14 @@ class SeurCashOnDelivery extends PaymentModule{
 			// Register Payment only if the order status validate the order
 			if ($order_status->logable)
 			{
-				// $order is the last order loop in the foreach
-				// The method addOrderPayment of the class Order make a create a paymentOrder
-				//     linked to the order reference and not to the order id
-				if (!$order->addOrderPayment($amount_paid))
+				//$order is the last order loop in the foreach
+				//The method addOrderPayment of the class Order make a create a paymentOrder
+				//    linked to the order reference and not to the order id
+
+				if (!$order->addOrderPayment($amount_paid+$cargo+cargo_rate))
 					throw new PrestaShopException('Can\'t save Order Payment');
 			}
-
+	
 			// Next !
 			$cart_rule_used = array();
 			$products = $this->context->cart->getProducts();
@@ -684,7 +733,7 @@ class SeurCashOnDelivery extends PaymentModule{
 							continue;
 
 						$order->addCartRule((int)$cart_rule['obj']->id, $cart_rule['obj']->name, $values);
-
+						
 						/* IF
 						** - This is not multi-shipping
 						** - The value of the voucher is greater than the total of the order
@@ -941,6 +990,7 @@ class SeurCashOnDelivery extends PaymentModule{
 				}
 			} // End foreach $order_detail_list
 			// Use the last order as currentOrder
+			DB::getInstance()->update('seur_order',array('codfee'=>$cargo),'id_order ='.$order->id);
 			$this->currentOrder = (int)$order->id;
 			return true;
 		}
@@ -959,7 +1009,7 @@ class SeurCashOnDelivery extends PaymentModule{
 		$cart = new Cart((int)($id_cart));
 
 		$coste = (float)(abs($cart->getOrderTotal(true, Cart::BOTH)));
-		$cargo = number_format($this->getCargo($cart) , 2, '.', '');
+		$cargo = number_format($this->calculateCargo($cart) , 2, '.', '');
 		$total_con_cargo = $coste + $cargo;
 
 		if (Validate::isLoadedObject($cart) && $cart->OrderExists() == false)
@@ -1389,6 +1439,7 @@ class SeurCashOnDelivery extends PaymentModule{
 						Mail::Send((int)$order->id_lang, 'order_conf', Mail::l('Order confirmation', (int)$order->id_lang), $data, $customer->email, $customer->firstname.' '.$customer->lastname, NULL, NULL, $file_attachement);
 
 				}
+
 				$this->currentOrder = (int)$order->id;
 				return true;
 			}

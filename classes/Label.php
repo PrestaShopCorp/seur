@@ -47,22 +47,22 @@ class Label
 			);
 
 			$soap_client = new SoapClient((string)Configuration::get('SEUR_URLWS_ET'), $sc_options);
-
+		
 			$merchant_data = SeurLib::getMerchantData();
 			$notification = SeurLib::getConfigurationField('notification_advice_radio');
 			$advice_checkbox = SeurLib::getConfigurationField('advice_checkbox');
 			$distribution_checkbox = SeurLib::getConfigurationField('distribution_checkbox');
-			$servicio = 31;
-			$producto = 2;
+			$servicio = Configuration::get('SEUR_NACIONAL_SERVICE');
+			$producto = Configuration::get('SEUR_NACIONAL_PRODUCT');
 			$mercancia = false;
 			$claveReembolso = '';
 			$valorReembolso = '';
-
+			
 			if (SeurLib::getConfigurationField('international_orders') == 1 && ($label_data['iso'] != 'ES' &&
 				$label_data['iso'] != 'PT' && $label_data['iso'] != 'AD'))
 			{
-				$servicio = 77;
-				$producto = 70;
+				$servicio = Configuration::get('SEUR_INTERNACIONAL_SERVICE');
+				$producto = Configuration::get('SEUR_INTERNACIONAL_PRODUCT');
 				$mercancia = true;
 				$label_data['total_bultos'] = 1;
 			}
@@ -170,7 +170,7 @@ class Label
 				$data = array(
 					'in0' => $merchant_data['user'],
 					'in1' => $merchant_data['pass'],
-					'in2' => $xml,
+					'in2' => $xml, 
 					'in3' => $xml_name,
 					'in4' => $merchant_data['nif_dni'],
 					'in5' => $merchant_data['franchise'],
@@ -178,7 +178,7 @@ class Label
 					'in7' => 'prestashop',
 				);
 				$response = $soap_client->impresionIntegracionPDFConECBWS($data);
-
+				
 				if ($response->out == 'ERROR')
 					return SeurLib::displayErrors ((string)$response->out);
 
@@ -212,17 +212,18 @@ class Label
 					'in9' => '-1',
 					'in10' => 'prestashop',
 				);
-
+		
 				$response = $soap_client->impresionIntegracionConECBWS($data);
-
+			
 				if ($response->out == 'ERROR' || $response->out->mensaje != 'OK')
 					return SeurLib::displayErrors('Error al crear el envio y la etiqueta: '.$response->out->mensaje); // @TODO check if must be translatable
 				else
 				{
+					SeurLib::setSeurOrder(pSQL($label_data['pedido']), (float)$total_packages, (float)$total_weight, 'zebra');
+					
 					if (is_writable(_PS_MODULE_DIR_.'seur/files/deliveries_labels/'))
 						file_put_contents(_PS_MODULE_DIR_.'seur/files/deliveries_labels/'.pSQL($label_name).'.txt', (string)$response->out->traza);
 
-					SeurLib::setSeurOrder(pSQL($label_data['pedido']), (float)$total_packages, (float)$total_weight, 'zebra');
 
 					if ($make_pickup && $auto)
 						Pickup::createPickup();

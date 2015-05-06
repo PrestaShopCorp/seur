@@ -53,7 +53,7 @@ $_MODULE['<{seurcashondelivery}prestashop>validation_50a09b039424d34b1675bfc8e25
 $_MODULE['<{seurcashondelivery}prestashop>validation_52bab1c3ac8aff9159be10acf1d5e55e'] = 'Confirmar mi pedido';
 $_MODULE['<{seurcashondelivery}prestashop>cargocomprareembolso_d99a604c79ce3c2e76a2f43488d5d4c3'] = 'Concepto';
 $_MODULE['<{seurcashondelivery}prestashop>cargocomprareembolso_b31148542ecbc304a91e464397e37ed9'] = 'Contra Reembolso de SEUR';
-$_MODULE['<{seurcashondelivery}prestashop>cargocomprareembolso_3d0d1f906e27800531e054a3b6787b7c'] = 'Importe comisión';
+$_MODULE['<{seurcashondelivery}prestashop>cargocomprareembolso_3d0d1f906e27800531e054a3b6787b7c'] = 'Cantidad';
 $_MODULE['<{seurcashondelivery}prestashop>cargocomprareembolso_c661985853c686deb2a20eebac2417bb'] = 'Esta tarifa está incluida en el precio de envío';
 $_MODULE['<{seurcashondelivery}prestashop>confirmation_2e2117b7c81aa9ea6931641ea2c6499f'] = 'Su pedido en';
 $_MODULE['<{seurcashondelivery}prestashop>confirmation_75fbf512d744977d62599cc3f0ae2bb4'] = 'está completado';
@@ -61,7 +61,7 @@ $_MODULE['<{seurcashondelivery}prestashop>confirmation_2dfa971550e794502dbc5184f
 $_MODULE['<{seurcashondelivery}prestashop>confirmation_e6dc7945b557a1cd949bea92dd58963e'] = 'Su pedido se enviará muy pronto';
 $_MODULE['<{seurcashondelivery}prestashop>confirmation_4fd16d47216e33a9a675f8b10a276c21'] = 'Para cualquier pregunta o más información, por favor contacte con nosotros.';
 $_MODULE['<{seurcashondelivery}prestashop>detallecomprareembolso_d99a604c79ce3c2e76a2f43488d5d4c3'] = 'Concepto';
-$_MODULE['<{seurcashondelivery}prestashop>detallecomprareembolso_694e8d1f2ee056f98ee488bdc4982d73'] = 'Importe comisión';
+$_MODULE['<{seurcashondelivery}prestashop>detallecomprareembolso_694e8d1f2ee056f98ee488bdc4982d73'] = 'Cantidad';
 $_MODULE['<{seurcashondelivery}prestashop>detallecomprareembolso_b31148542ecbc304a91e464397e37ed9'] = 'Contra Reembolso de SEUR';
 $_MODULE['<{seurcashondelivery}prestashop>detallecomprareembolso_c661985853c686deb2a20eebac2417bb'] = 'Esta tarifa está incluída en el precio de entrega';
 $_MODULE['<{seurcashondelivery}prestashop>payment_b31148542ecbc304a91e464397e37ed9'] = 'Contra Reembolso de SEUR';
@@ -71,6 +71,6 @@ $_MODULE['<{seurcashondelivery}prestashop>payment_bueno_b31148542ecbc304a91e4643
 $_MODULE['<{seurcashondelivery}prestashop>payment_bueno_69edde90a1c38b2efccc65419fc0e540'] = 'Coste';
 $_MODULE['<{seurcashondelivery}prestashop>payment_bueno_310cdcd76c50cb7ee53563ddfa2a6cf5'] = 'Tarifa';
 $_MODULE['<{seurcashondelivery}prestashop>pdf_d99a604c79ce3c2e76a2f43488d5d4c3'] = 'Concepto';
-$_MODULE['<{seurcashondelivery}prestashop>pdf_694e8d1f2ee056f98ee488bdc4982d73'] = 'Importe comisión';
+$_MODULE['<{seurcashondelivery}prestashop>pdf_694e8d1f2ee056f98ee488bdc4982d73'] = 'Cantidad';
 $_MODULE['<{seurcashondelivery}prestashop>pdf_b31148542ecbc304a91e464397e37ed9'] = 'Contra Reembolso de SEUR';
 $_MODULE['<{seurcashondelivery}prestashop>pdf_c661985853c686deb2a20eebac2417bb'] = 'Esta tarifa está incluída en el precio de entrega';

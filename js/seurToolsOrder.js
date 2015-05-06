@@ -28,10 +28,6 @@ $(document).ready(function(){
 		
 	$('a.buttongenerar').click(function(){
 		$('input.buttonguardar').css('display', 'none').remove();
-		$('input[name="numBultos"]').attr('disabled','disabled'); 
-		$('input[name="pesoBultos"]').attr('disabled','disabled'); 
-		$('input[name="total_paid_submit_seurcashondelivery"]').css('display', 'none').remove();
-		$('#input_total_paid').attr('disabled','disabled'); 
 	});
 
 	//------------------

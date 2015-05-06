@@ -43,7 +43,7 @@ class Town
 			$data = array(
 				'in0' => '',
 				'in1' => '',
-				'in2' => str_pad($postal_code, 4, '0', STR_PAD_LEFT),
+				'in2' => $postal_code,
 				'in3' => '',
 				'in4' => '',
 				'in5' => Configuration::get('SEUR_WS_USERNAME'),

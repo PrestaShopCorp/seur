@@ -59,8 +59,8 @@
             <p>{l s='Expedition Number' mod='seur'}: {l s='Pending' mod='seur'}</p>
             <p>{l s='Status' mod='seur'}: {l s='Pending' mod='seur'}</p>
         {else}
-            <p>{l s='Expedition Number' mod='seur'}: {$xml_s.EXPEDICION.EXPEDICION_NUM|escape:'htmlall':'UTF-8'}</p>
-            <p>{l s='Status' mod='seur'}: {$xml_s.EXPEDICION.DESCRIPCION_PARA_CLIENTE|escape:'htmlall':'UTF-8'}</p>
+            <p>{l s='Expedition Number' mod='seur'}: {$xml->EXPEDICION->EXPEDICION_NUM|escape:'htmlall':'UTF-8'}</p>
+            <p>{l s='Status' mod='seur'}: {$xml->EXPEDICION->DESCRIPCION_PARA_CLIENTE|escape:'htmlall':'UTF-8'}</p>
         {/if}
         {if $iso_country == 'ES' || $iso_country == 'PT' || $iso_country == 'AD'}
             {if $order_data.imprimido == NULL}

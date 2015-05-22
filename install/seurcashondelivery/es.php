@@ -55,6 +55,7 @@ $_MODULE['<{seurcashondelivery}prestashop>cargocomprareembolso_d99a604c79ce3c2e7
 $_MODULE['<{seurcashondelivery}prestashop>cargocomprareembolso_b31148542ecbc304a91e464397e37ed9'] = 'Contra Reembolso de SEUR';
 $_MODULE['<{seurcashondelivery}prestashop>cargocomprareembolso_3d0d1f906e27800531e054a3b6787b7c'] = 'Importe comisión';
 $_MODULE['<{seurcashondelivery}prestashop>cargocomprareembolso_c661985853c686deb2a20eebac2417bb'] = 'Esta tarifa está incluida en el precio de envío';
+$_MODULE['<{seurcashondelivery}prestashop>cargocomprareembolso_06933067aafd48425d67bcb01bba5cb6'] = 'Actualizar';
 $_MODULE['<{seurcashondelivery}prestashop>confirmation_2e2117b7c81aa9ea6931641ea2c6499f'] = 'Su pedido en';
 $_MODULE['<{seurcashondelivery}prestashop>confirmation_75fbf512d744977d62599cc3f0ae2bb4'] = 'está completado';
 $_MODULE['<{seurcashondelivery}prestashop>confirmation_2dfa971550e794502dbc5184fb2f6645'] = 'Ha elegido el método de contra reembolso de SEUR';

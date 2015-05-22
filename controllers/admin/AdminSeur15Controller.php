@@ -57,6 +57,7 @@ class AdminSeur15Controller extends ModuleAdminController {
 		
 		parent::initContent();
 		$this->display = 'view';
+		
 		if (Tools::getValue('verDetalle'))
 		{
 			$response = Expedition::getExpeditions($this->getExpeditionData());
@@ -75,6 +76,10 @@ class AdminSeur15Controller extends ModuleAdminController {
 		{
 			$response = Expedition::getExpeditions($this->getExpeditionData());
 			$this->assignTplVars($response, false);
+			$this->content = $this->context->smarty->fetch(_PS_MODULE_DIR_.'seur/views/templates/admin/AdminSeur.tpl');
+			
+			parent::initContent();
+			$this->display = 'view';
 		}
 		elseif (Tools::getValue('generateLabel'))
 		{
@@ -85,6 +90,7 @@ class AdminSeur15Controller extends ModuleAdminController {
 			$this->assignTplVars();
 		
 	}
+	
 	public function assignTplVars($response = null, $detail = null, $error = null)
 	{
 		$params = array();
@@ -188,7 +194,13 @@ class AdminSeur15Controller extends ModuleAdminController {
 					$errors .= $this->l('No results.');
 			}
 		}
+		
+		
+		$params['ps_order_states'] = $this->getPsOrderStates();
+		
+		
 		$params['headers'] = (isset($headers) && is_array($headers)) ? $headers : false;
+		$params['headersOcultas'] = (isset($headersOcultas) && is_array($headersOcultas)) ? $headersOcultas : false;
 		$params['print_type'] = (int)SeurLib::getConfigurationField('print_type');
 		$params['ps14_tab'] = $ps14_tab;
 		$params['ps_base_uri'] = _MODULE_DIR_;
@@ -199,7 +211,8 @@ class AdminSeur15Controller extends ModuleAdminController {
 		$params['errors'] = $errors;
 		$params['pickup_data'] = Pickup::getLastPickup();
 		$params['steady_pickup'] = (bool)SeurLib::getConfigurationField('pickup');
-		
+		$params['countryTo'] = '';
+		$params['img_path'] = _MODULE_DIR_.'/seur/img/';
 		
 		$params['ID'] = Tools::getValue('ID', '');
 		$params['reference'] = Tools::getValue('reference', '');
@@ -212,7 +225,7 @@ class AdminSeur15Controller extends ModuleAdminController {
 		$params['city'] = Tools::getValue('city', '');
 		$params['country'] = Tools::getValue('country', '');
 		$params['address'] = Tools::getValue('address', '');
-		
+		$params['order_state'] = Tools::getValue('order_state', '');
 		
 		$this->context->smarty->assign($params);
 	}
@@ -253,9 +266,9 @@ class AdminSeur15Controller extends ModuleAdminController {
 			$expedition_data['order_state'] = Tools::getValue('order_state');
 		return $expedition_data;
 	}
-	public function getAllOrders($id = null, $reference = null, $date_start = null, $date_end = null, $name = null, $address = null, $postal_code = null, $city = null, $state_name = null, $country = null)
+	public function getAllOrders($id = null, $reference = null, $date_start = null, $date_end = null, $name = null, $address = null, $postal_code = null, $city = null, $state_name = null, $country = null, $order_state = null)
 	{
-		$sql = 'SELECT o.reference,o.id_order,o.date_add,o.reference, a.firstname, a.lastname, a.address1, a.address2, a.postcode, a.city, cl.name as country, s.name as state FROM '._DB_PREFIX_.'orders o INNER JOIN '._DB_PREFIX_.'seur_order so ON so.id_order  = o.id_order  INNER JOIN '._DB_PREFIX_.'address a ON o.id_address_delivery = a.id_address INNER JOIN '._DB_PREFIX_.'country_lang cl ON cl.id_country = a.id_country AND cl.id_lang ='.(int)$this->context->language->id.' LEFT JOIN '._DB_PREFIX_.'state s ON s.id_state = a.id_state ';
+		$sql = 'SELECT o.reference,o.id_order,o.date_add,o.reference, a.firstname, a.lastname, a.address1, a.address2, a.postcode, a.city, cl.name as country, s.name as state, os.name as current_state FROM '._DB_PREFIX_.'orders o INNER JOIN '._DB_PREFIX_.'seur_order so ON so.id_order  = o.id_order  INNER JOIN '._DB_PREFIX_.'address a ON o.id_address_delivery = a.id_address INNER JOIN '._DB_PREFIX_.'country_lang cl ON cl.id_country = a.id_country AND cl.id_lang ='.(int)$this->context->language->id.' LEFT JOIN '._DB_PREFIX_.'state s ON s.id_state = a.id_state LEFT JOIN '._DB_PREFIX_.'order_state_lang os ON os.id_order_state=o.current_state AND os.id_lang='.(int)$this->context->language->id;
 		$where = array();
 		if ((int)$id > 0)
 			$where[] = ' o.id_order ='.(int)$id.' ';
@@ -291,61 +304,66 @@ class AdminSeur15Controller extends ModuleAdminController {
 		
 		if (trim($country) != '')
 			$where[] = ' a.country like = \'%'.pSQL($country).'%\'   ';
+	
+		if (trim($order_state) != '')
+			$where[] = ' os.id_order_state = '.pSQL($order_state).'   ';
 		
 		if (!empty($where))
 			$sql .= ' WHERE '.implode(' AND ', $where);
 			
 		$sql .= ' ORDER BY o.id_order DESC';
 		return DB::getInstance()->executeS($sql);
-	
 	}
+	
 	public function printLabels($id_orders = array(), $type = 'txt')
 	{
 		try
 		{
-				ob_end_clean();
-				header('Content-type: text/plain');
-				header('Content-Disposition: attachment; filename=seur_labels-'.date('Y-m-d h:i:s', strtotime('now')).'.txt');
-				header('Content-Transfer-Encoding: binary');
-				header('Accept-Ranges: bytes');
-		if (!is_array($id_orders)) $id_orders = (array)$id_orders;
-		$directory = _PS_MODULE_DIR_.'seur/files/deliveries_labels/';
-		if ($type == 'txt')
-		{
+			ob_end_clean();
+			header('Content-type: text/plain');
+			header('Content-Disposition: attachment; filename=seur_labels-'.date('Y-m-d h:i:s', strtotime('now')).'.txt');
+			header('Content-Transfer-Encoding: binary');
+			header('Accept-Ranges: bytes');
+				
+			if (!is_array($id_orders)) $id_orders = (array)$id_orders;
+				$directory = _PS_MODULE_DIR_.'seur/files/deliveries_labels/';
+			
+			if ($type == 'txt')
+			{
 
 				if (is_array($id_orders))
-				foreach ($id_orders as $id_order)
-				{
-					$name = sprintf('%06d', (int)$id_order);
-					if (!file_exists($directory.$name.'.txt') || !($fp = Tools::file_get_contents($directory.$name.'.txt')))
+					foreach ($id_orders as $id_order)
 					{
-									
-							$data_label = $this->getLabelData($id_order);
-							if (is_array($data_label))
-							{
-							
-								// if ($this->isPrinted((int)$id_order, true))
-								// {
-								// $success = true;
-								// }
-								// else
-								// {
-								// echo $name;
-								$success = Label::createLabels($data_label, 'zebra');
-								// }
-							
-								if ($success === true)
+						$name = sprintf('%06d', (int)$id_order);
+						if (!file_exists($directory.$name.'.txt') || !($fp = Tools::file_get_contents($directory.$name.'.txt')))
+						{
+										
+								$data_label = $this->getLabelData($id_order);
+								if (is_array($data_label))
 								{
 								
-									// if ($this->setAsPrinted((int)$id_order, true))
-											// $this->printLabel((int)array($id_order), 'txt');
-									$this->setAsPrinted((int)$id_order, true);		
-								}
+									// if ($this->isPrinted((int)$id_order, true))
+									// {
+									// $success = true;
+									// }
+									// else
+									// {
+									// echo $name;
+									$success = Label::createLabels($data_label, 'zebra');
+									// }
+								
+									if ($success === true)
+									{
+									
+										// if ($this->setAsPrinted((int)$id_order, true))
+												// $this->printLabel((int)array($id_order), 'txt');
+										$this->setAsPrinted((int)$id_order, true);		
+									}
+							
+							}
 						
 						}
-					
 					}
-				}
 				if (is_array($id_orders))
 					foreach ($id_orders as $id_order)
 					{
@@ -357,28 +375,30 @@ class AdminSeur15Controller extends ModuleAdminController {
 							echo $fp;				
 						}
 					}
-		}
-		elseif ($type == 'pdf')
-		{
-			if (file_exists($directory.$name.'.pdf') && ($fp = Tools::file_get_contents($directory.$name.'.pdf')))
-			{
-				ob_end_clean();
-				header('Content-type: application/pdf');
-				header('Content-Disposition: inline; filename='.$name.'.pdf');
-				header('Content-Transfer-Encoding: binary');
-				header('Accept-Ranges: bytes');
-
-				echo $fp;
 			}
-		}
+			elseif ($type == 'pdf')
+			{
+				if (file_exists($directory.$name.'.pdf') && ($fp = Tools::file_get_contents($directory.$name.'.pdf')))
+				{
+					ob_end_clean();
+					header('Content-type: application/pdf');
+					header('Content-Disposition: inline; filename='.$name.'.pdf');
+					header('Content-Transfer-Encoding: binary');
+					header('Accept-Ranges: bytes');
+
+					echo $fp;
+				}
+			}
 		
-		}catch(Exception $e)
+		}
+		catch(Exception $e)
 		{
 			echo $e->getMessage();
 		}
 		exit;	
 		$this->context->smarty->assign('error', $this->l('Document was already printed, but is missing in module directory'));
 	}
+	
 	private function isPrinted($id_order, $label = false)
 	{
 		$field = $label ? 'printed_label' : 'printed_pdf';
@@ -400,110 +420,115 @@ class AdminSeur15Controller extends ModuleAdminController {
 			WHERE `id_order` = "'.(int)$id_order.'"
 		');
 	}
+	
 	private function getLabelData($id_order)
 	{
-					$label_data = false;
-					$cookie = $this->context->cookie;
-					$order = new Order($id_order);
-					$customer = new Customer($order->id_customer);
-					$address_delivery = new Address($order->id_address_delivery);
-					
-					$carrier_pos = SeurLib::getSeurCarrier('SEP');
-					$datospos = '';
-					$products = $order->getProductsDetail();
-					$order_weigth = 0;
-					foreach ($products as $product)
-							$order_weigth += (float)$product['product_weight'] * (float)$product['product_quantity'];
+		$label_data = false;
+		$cookie = $this->context->cookie;
+		$order = new Order($id_order);
+		$customer = new Customer($order->id_customer);
+		$address_delivery = new Address($order->id_address_delivery);
+		
+		$carrier_pos = SeurLib::getSeurCarrier('SEP');
+		$datospos = '';
+		$products = $order->getProductsDetail();
+		$order_weigth = 0;
+		foreach ($products as $product)
+				$order_weigth += (float)$product['product_weight'] * (float)$product['product_quantity'];
 
-					$order_weigth = ($order_weigth < 1.0 ? 1.0 : (float)$order_weigth);
-					$name = $address_delivery->firstname.' '.$address_delivery->lastname;
-					$direccion = $address_delivery->address1.' '.$address_delivery->address2;
-					$newcountry = new Country((int)$address_delivery->id_country, (int)$cookie->id_lang);
-					$iso_merchant = SeurLib::getMerchantField('country');
-					$iso_country = Country::getIsoById((int)$address_delivery->id_country);
-						if ($iso_country == 'PT')
-						{
-							$post_code = explode(' ', $address_delivery->postcode);
-							$post_code = $post_code[0];
-						}
-						else
-							$post_code = $address_delivery->postcode;
+		$order_weigth = ($order_weigth < 1.0 ? 1.0 : (float)$order_weigth);
+		$name = $address_delivery->firstname.' '.$address_delivery->lastname;
+		$direccion = $address_delivery->address1.' '.$address_delivery->address2;
+		$newcountry = new Country((int)$address_delivery->id_country, (int)$cookie->id_lang);
+		$iso_merchant = SeurLib::getMerchantField('country');
+		$iso_country = Country::getIsoById((int)$address_delivery->id_country);
+			if ($iso_country == 'PT')
+			{
+				$post_code = explode(' ', $address_delivery->postcode);
+				$post_code = $post_code[0];
+			}
+			else
+				$post_code = $address_delivery->postcode;
 
-						$international_orders = SeurLib::getConfigurationField('international_orders');
-						$date_calculate = strtotime('-14 day', strtotime(date('Y-m-d')));
-						$date_display = date('Y-m-d H:m:i', $date_calculate);
-				
-					if ((!$international_orders && !($iso_country == 'ES' || $iso_country == 'PT' || $iso_country == 'AD')))	
-						return false;
-					
-					$order_data = SeurLib::getSeurOrder((int)$order->id);
-					$response_post_code = Town::getTowns($post_code);
-					$order_weigth = ((float)$order_weigth != $order_data['peso_bultos'] ? (float)$order_data['peso_bultos'] : (float)$order_weigth);
-				
-					if ((int)$order->id_carrier == $carrier_pos['id'])
-					{
-						$datospos = SeurLib::getOrderPos((int)$order->id_cart);
-						if (!empty($datospos))
-						{
-							$label_data = array(
-								'pedido' => sprintf('%06d', (int)$order->id),
-								'total_bultos' => $order_data['numero_bultos'],
-								'total_kilos' => (float)$order_weigth,
-								'direccion_consignatario' => $direccion,
-								'consignee_town' => $datospos['city'],
-								'codPostal_consignatario' => $datospos['postal_code'],
-								'telefono_consignatario' => (!empty($address_delivery->phone_mobile) ? $address_delivery->phone_mobile : $address_delivery->phone),
-								'movil' => $address_delivery->phone_mobile,
-								'name' => $name,
-								'companyia' => $datospos['company'],
-								'email_consignatario' => Validate::isLoadedObject($customer) ? $customer->email : '',
-								'dni' => $address_delivery->dni,
-								'info_adicional' => $info_adicional_str,
-								'country' => $newcountry->name,
-								'iso' => $newcountry->iso_code,
-								'cod_centro' => $datospos['id_seur_pos'],
-								'iso_merchant' => $iso_merchant
-							);
-							$rate_data['cod_centro'] = $datospos['id_seur_pos'];
-						}
-					}
-					else
-					{
-						$label_data = array(
-						'pedido' => sprintf('%06d', (int)$order->id),
-						'total_bultos' => $order_data['numero_bultos'],
-						'total_kilos' => (float)$order_weigth,
-						'direccion_consignatario' => $direccion,
-						'consignee_town' => $address_delivery->city,
-						'codPostal_consignatario' => $post_code,
-						'telefono_consignatario' => (!empty($address_delivery->phone_mobile) ? $address_delivery->phone_mobile : $address_delivery->phone),
-						'movil' => $address_delivery->phone_mobile,
-						'name' => $name,
-						'companyia' => (!empty($address_delivery->company) ? $address_delivery->company : ''),
-						'email_consignatario' => Validate::isLoadedObject($customer) ? $customer->email : '',
-						'dni' => $address_delivery->dni,
-						'info_adicional' => $info_adicional_str,
-						'country' => $newcountry->name,
-						'iso' => $newcountry->iso_code,
-						'iso_merchant' => $iso_merchant,
-						'admin_dir' => utf8_encode(_PS_ADMIN_DIR_),
-						'id_employee' => $cookie->id_employee,
-						'token' => Tools::getAdminTokenLite('AdminOrders'),
-						'back' => $back
-					);
-					
-					}
-					if (strcmp($order->module, 'seurcashondelivery') == 0)
-						$label_data['reembolso'] = (float)$order_data['total_paid'];
-				
-					return $label_data;
+			$international_orders = SeurLib::getConfigurationField('international_orders');
+			$date_calculate = strtotime('-14 day', strtotime(date('Y-m-d')));
+			$date_display = date('Y-m-d H:m:i', $date_calculate);
 	
+		if ((!$international_orders && !($iso_country == 'ES' || $iso_country == 'PT' || $iso_country == 'AD')))	
+			return false;
+		
+		$order_data = SeurLib::getSeurOrder((int)$order->id);
+		$response_post_code = Town::getTowns($post_code);
+		$order_weigth = ((float)$order_weigth != $order_data['peso_bultos'] ? (float)$order_data['peso_bultos'] : (float)$order_weigth);
 	
+		if ((int)$order->id_carrier == $carrier_pos['id'])
+		{
+			$datospos = SeurLib::getOrderPos((int)$order->id_cart);
+			if (!empty($datospos))
+			{
+				$label_data = array(
+					'pedido' => sprintf('%06d', (int)$order->id),
+					'total_bultos' => $order_data['numero_bultos'],
+					'total_kilos' => (float)$order_weigth,
+					'direccion_consignatario' => $direccion,
+					'consignee_town' => $datospos['city'],
+					'codPostal_consignatario' => $datospos['postal_code'],
+					'telefono_consignatario' => (!empty($address_delivery->phone_mobile) ? $address_delivery->phone_mobile : $address_delivery->phone),
+					'movil' => $address_delivery->phone_mobile,
+					'name' => $name,
+					'companyia' => $datospos['company'],
+					'email_consignatario' => Validate::isLoadedObject($customer) ? $customer->email : '',
+					'dni' => $address_delivery->dni,
+					'info_adicional' => $info_adicional_str,
+					'country' => $newcountry->name,
+					'iso' => $newcountry->iso_code,
+					'cod_centro' => $datospos['id_seur_pos'],
+					'iso_merchant' => $iso_merchant
+				);
+				$rate_data['cod_centro'] = $datospos['id_seur_pos'];
+			}
+		}
+		else
+		{
+			$label_data = array(
+			'pedido' => sprintf('%06d', (int)$order->id),
+			'total_bultos' => $order_data['numero_bultos'],
+			'total_kilos' => (float)$order_weigth,
+			'direccion_consignatario' => $direccion,
+			'consignee_town' => $address_delivery->city,
+			'codPostal_consignatario' => $post_code,
+			'telefono_consignatario' => (!empty($address_delivery->phone_mobile) ? $address_delivery->phone_mobile : $address_delivery->phone),
+			'movil' => $address_delivery->phone_mobile,
+			'name' => $name,
+			'companyia' => (!empty($address_delivery->company) ? $address_delivery->company : ''),
+			'email_consignatario' => Validate::isLoadedObject($customer) ? $customer->email : '',
+			'dni' => $address_delivery->dni,
+			'info_adicional' => $info_adicional_str,
+			'country' => $newcountry->name,
+			'iso' => $newcountry->iso_code,
+			'iso_merchant' => $iso_merchant,
+			'admin_dir' => utf8_encode(_PS_ADMIN_DIR_),
+			'id_employee' => $cookie->id_employee,
+			'token' => Tools::getAdminTokenLite('AdminOrders'),
+			'back' => $back
+		);
+		
+		}
+		if (strcmp($order->module, 'seurcashondelivery') == 0)
+			$label_data['reembolso'] = (float)$order_data['total_paid'];
+	
+		return $label_data;
 	}
+	
 	public function setMedia()
 	{
-	parent::setMedia();
-	$this->addJS(_MODULE_DIR_.'seur/css/seur.css');
-	$this->addJQueryUI('ui.datepicker');
+		parent::setMedia();
+		$this->addCSS(_MODULE_DIR_.'seur/css/seur.css');
+		$this->addJQueryUI('ui.datepicker');
+	}
+	
+	public function getPsOrderStates()
+	{
+		return DB::getInstance()->ExecuteS('SELECT id_order_state, name FROM `'._DB_PREFIX_.'order_state_lang` WHERE `id_lang` = '.(int)$this->context->language->id);
 	}
 }

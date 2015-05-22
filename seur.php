@@ -52,7 +52,7 @@ class Seur extends CarrierModule
 	public function __construct()
 	{
 		$this->name = 'seur';
-		$this->version = '1.1';
+		$this->version = '1.3';
 		$this->author = 'www.lineagrafica.es';
 		$this->need_instance = 0;
 		$this->tab = 'shipping_logistics';
@@ -1051,19 +1051,24 @@ class Seur extends CarrierModule
 						$address_error = 1;
 						
 					$pickup_s = 0;
-					if ($pickup && strtotime(date('Y-m-d')) == strtotime($pickup_date))
+					if ($pickup && strtotime(date('Y-m-d')) >= strtotime($pickup_date))
 						$pickup_s = 1;
 					$state = Expedition::getExpeditions(array('reference_number' => sprintf('%06d', (int)$order->id)));
 					$is_empty_state = false;
 					$xml_s = false;
-					if (!empty($state->out))
+					
+					if (empty($state->out))
 						$is_empty_state = true;
 					else
 					{
 						$string_xml = htmlspecialchars_decode($state->out);
 						$string_xml = str_replace('&', '&amp; ', $string_xml);
 						$xml_s = simplexml_load_string($string_xml);
+						
+						if(!$xml_s->EXPEDICION)
+							$is_empty_state = true;
 					}
+					
 					$rate_data_ajax = Tools::jsonEncode($rate_data);
 					$path = '../modules/seur/js/';
 					$file = (Configuration::get('PS_SSL_ENABLED') ? 'https://' : 'http://').$_SERVER['HTTP_HOST'].__PS_BASE_URI__.'modules/seur/files/deliveries_labels/'.sprintf('%06d', (int)$order->id).'.txt';

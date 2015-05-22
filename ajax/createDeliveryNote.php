@@ -32,7 +32,7 @@ if (class_exists('SeurLib') == false)
 	include_once(_PS_MODULE_DIR_.'seur/classes/SeurLib.php');
 
 $token = Tools::getValue('token');
-$admin_token = Tools::getAdminToken('AdminSeur'.(int)Tab::getIdFromClassName('AdminSeur').(int)Tools::getValue('id_employee'));
+$admin_token = Tools::getAdminToken('AdminSeur15'.(int)Tab::getIdFromClassName('AdminSeur15').(int)Tools::getValue('id_employee'));
 
 if ($token != $admin_token)
 	exit;

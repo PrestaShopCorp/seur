@@ -38,11 +38,16 @@
 {/literal}
 </script>
 {/if}
-			
+		
 			<fieldset>
 				<legend>
 					<img src="{$img_dir|escape:'htmlall':'UTF-8'}/logonew.png" />
 			 	</legend>
+				<div id="downloadmanual-seur">
+					<a id="manual_download" href="{$ps_base_uri|escape:'htmlall':'UTF-8'}seur/manual/seur_manual.pdf" target="_blank" >
+						<img src="{$img_path|escape:'htmlall':'UTF-8'}ico_descargar.png" alt="{l s='Manual' mod='seur'}" /> {l s='Manual' mod='seur'}
+					</a>
+				</div>
 				<div id="seur_module" class="{$ps_version|escape:'htmlall':'UTF-8'}">
 					<ul class="configuration_menu">
 						{if !$print_type}
@@ -81,7 +86,7 @@
 											<td><input class="ps14_input" type="text" name="reference_number" value="" autocomplete="off" /></td>
 											<td><input class="ps14_input" type="text" name="expedition_number" value="" autocomplete="off" /></td>
 											<td><input class="ps14_input" type="text" name="start_date" id="start_date" autocomplete="off" value="{$start_data|escape:'htmlall':'UTF-8'}"/></td>
-											<td><input class="ps14_input" type="text" name="end_date" id="end_date" class="datepicker" autocomplete="off" value=""/></td>
+											<td><input class="ps14_input" type="text" name="end_date" id="end_date" class="datepicker" autocomplete="off" value="{$delivery_valuend_data|escape:'htmlall':'UTF-8'}"/></td>
 											<td colspan="4">
 												<select id="order_state" name="order_state" value="" autocomplete="off">
 												{foreach $seur_order_states as $key => $seur_order_state}
@@ -94,8 +99,13 @@
 											</td>
 										</tr>
 									</thead>
-									{if $errors}
-										{$errors|escape:'htmlall':'UTF-8'}
+									{if $errors}									
+										<div class="bootstrap">
+											<div class="module_error alert alert-danger">
+												<button data-dismiss="alert" class="close" type="button">×</button>
+												{$errors|escape:'htmlall':'UTF-8'}
+											</div>
+										</div>
 									{/if}
 					<tbody>
 
@@ -106,9 +116,9 @@
 					{/foreach}
 					</tr>
 					{/if}
-			
+					
 					{if $deliveries_data}
-					{foreach $deliveries_data item=$delivery_data name='delivery_item'}
+					{foreach $deliveries_data item=delivery_data name='delivery_item'}
 						<tr {if $smarty.foreach.delivery_item.iteration % 2 != 0} class="alternate" {/if} >
 						{assign var='delivered' value=false}
 						{if $delivery_data}
@@ -118,7 +128,7 @@
 								
 							{/if}
 							<td class='{$key}' {if $key eq 'EXPEDICION' || $key eq 'Detalles'} colspan='2' {/if}> 
-							{if in_array($key, $headersOcultas)} {$delivery_value} {/if}
+							{if !in_array($key, $headersOcultas)} {$delivery_value} {/if}
 							
 							{if $key eq 'Descripcion' && $delivery_value eq 'ENTREGA EFECTUADA'}
 								{assign var='delivered' value=true}
@@ -138,9 +148,14 @@
 						{/foreach}
 						{/if}
 						</tr>
-						{math assign='line' equation='y+x' x=$line y=1}
+					
 					{foreachelse}
-					{l s='No result' mod='seur'}
+					<div class="bootstrap">
+						<div class="module_error alert alert-danger">
+							<button data-dismiss="alert" class="close" type="button">×</button>
+							{l s='No result' mod='seur'}
+						</div>
+					</div>
 					{/foreach}
 					{/if}			
 				</tbody>
@@ -169,56 +184,53 @@
 
 		<li id="pickups" {if $tab_view eq 'pickups'} class="default" {/if}>
 			<table class="table" cellspacing="0">
-			<thead>
-		
-				
-		{assign var='steady_pickup' value='false'};
-		
-		{if $pickup_data}
-			{assign var=pickup_date value=" "|explode:$pickup_data['date']} 
-		{/if}
-		
+				<thead>
+			
+					{if $pickup_data}
+						{assign var=pickup_date value=" "|explode:$pickup_data['date']} 
+					{/if}
 					
-		{if !empty($pickup_data) && strtotime(date('Y-m-d')) == strtotime($pickup_date[0]) && !$steady_pickup}
-				<tr>
-						<th>{l s='Localizer' mod='seur'}</th>
-						<th colspan="2">{l s='Date' mod='seur'}</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr >
-					   <td>{$pickup_data['localizer']}</td>
-					   <td>{$pickup_data['date']}</td>
-					</tr>
-				</tbody>
-		
-		{elseif date('H')|intval < 14 && !$steady_pickup}
-					<tr>
-					<td class="createpickup">
-						<a href="&createPickup=1">{l s='Create pickup' mod='seur'}</a>
-					</td>
-					</tr>
-		{elseif $steady_pickup}
-					<tr>
-						<th>{l s='Fixed pickup.' mod='seur'}</th>
-					</tr>
-		{elseif date('H')|intval >= 14}
-		
-					<tbody>
-						<tr>
-							<td>
-							<p><img src="../img/admin/help2.png" /> 
-							   {l s='14H is past, to create a pickup please contact SEUR on 902101010 or via' mod='seur'}
-							</p>
-							<p><a href="http://www.seur.com" target="_blank">www.seur.com</a></p>
-							<p>{l s='Thank you.' mod='seur'}</p>
-							</td>
-						</tr>
+								
+					{if !empty($pickup_data) && strtotime(date('Y-m-d')) == strtotime($pickup_date[0]) && !$steady_pickup}
+							<tr>
+								<th>{l s='Localizer' mod='seur'}</th>
+								<th colspan="2">{l s='Date' mod='seur'}</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr >
+							   <td>{$pickup_data['localizer']}</td>
+							   <td>{$pickup_data['date']}</td>
+							</tr>
 						</tbody>
-		{/if}
+					
+					{elseif date('H')|intval < 14 && !$steady_pickup}
+							<tr>
+								<td class="createpickup">
+									<a href="&createPickup=1">{l s='Create pickup' mod='seur'}</a>
+								</td>
+							</tr>
+					{elseif $steady_pickup}
+							<tr>
+								<th>{l s='Fixed pickup.' mod='seur'}</th>
+							</tr>
+					{elseif date('H')|intval >= 14}
+					
+						<tbody>
+							<tr>
+								<td>
+								<p><img src="../img/admin/help2.png" /> 
+								   {l s='14H is past, to create a pickup please contact SEUR on 902101010 or via' mod='seur'}
+								</p>
+								<p><a href="http://www.seur.com" target="_blank">www.seur.com</a></p>
+								<p>{l s='Thank you.' mod='seur'}</p>
+								</td>
+							</tr>
+						</tbody>
+					{/if}
 
-		</thead>
-					</table>
+				</thead>
+			</table>
 				</li>
 				<li id="label"  {if $tab_view eq 'label'} class="default" {/if}>
 					<form action="index.php?controller=AdminSeur15&generateLabel=1&token={$token|escape:'htmlall':'UTF-8'}{$ps14_tab|escape:'htmlall':'UTF-8'}" method="post" target="_blank">
@@ -234,6 +246,7 @@
 											<th>{l s='City' mod='seur'}</th>
 											<th>{l s='State' mod='seur'}</th>
 											<th>{l s='Country' mod='seur'}</th>
+											<th>{l s='Order state' mod='seur'}</th>
 											<th>{l s='Printed label' mod='seur'}</th>
 											<th></th>
 								</tr>
@@ -250,21 +263,23 @@
 											<td><input class="ps14_input" type="text" name="postcode" id="postcode" autocomplete="off" value="{$postcode|escape:'htmlall':'UTF-8'}"/></td>
 											<td><input class="ps14_input" type="text" name="city" id="city" autocomplete="off" value="{$city|escape:'htmlall':'UTF-8'}"/></td>
 											<td><input class="ps14_input" type="text" name="state" id="state" autocomplete="off" value="{$state|escape:'htmlall':'UTF-8'}"/></td>
-											<td><input class="ps14_input" type="text" name="country" id="couuntry" autocomplete="off" value="{$country|escape:'htmlall':'UTF-8'}"/></td>
-											<td><input  type="checkbox"   id="printed_label" autocomplete="off" value=""/></td>
+											<td><input class="ps14_input" type="text" name="country" id="country" autocomplete="off" value="{$country|escape:'htmlall':'UTF-8'}"/></td>
+											<td>
+												<select id="order_state" name="order_state" value="" autocomplete="off">
+													<option value=""></option>
+												{foreach $ps_order_states item=ps_order_state}
+													<option value="{$ps_order_state.id_order_state}" {if ($order_state == $ps_order_state.id_order_state)}selected="selected"{/if}>{$ps_order_state.name}</option>
+												{/foreach}
+												</select>
+											</td>
+											<td style="text-align:center;"><input  type="checkbox"   id="printed_label" autocomplete="off" value=""/></td>
 											<td><a class="filter" id="labelsFilter">{l s='Filtrar' mod='seur'}</a></td>
 								</tr>
 							</thead>
 					
 							<tbody>
-							
-							{if !empty($orders)}
-							{foreach $orders as $order}
-									<tr><td>{$order.id_order|escape:'htmlall':'UTF-8'}</td><td>{$order.reference|escape:'htmlall':'UTF-8'}</td><td>{$order.date_add|date_format:"%d/%m/%G"}</td><td>{$order.firstname|escape:'htmlall':'UTF-8'} {$order.lastname|escape:'htmlall':'UTF-8'} </td><td>{$order.address1|escape:'htmlall':'UTF-8'} {$order.address2|escape:'htmlall':'UTF-8'} </td><td>{$order.postcode|escape:'htmlall':'UTF-8'} </td><td>{$order.city} </td><td>{$order.state|escape:'htmlall':'UTF-8'} </td><td>{$order.country|escape:'htmlall':'UTF-8'} </td><td><input type="checkbox" name="id_orders[]" value="{$order.id_order|escape:'htmlall':'UTF-8'}"/></td><td></td></tr>	
-									<tr><td colspan="10"></td><td colspan="1"><input  class="button btnTab" type="submit"  value="{l s='Imprimir etiqueta' mod='seur'}"></td></tr>	
-							{/foreach}
-							{/if}
-						</tbody>
+						
+							</tbody>
 						</table>
 						<script type="text/javascript">
 							$(document).ready(function(){
@@ -294,6 +309,7 @@
 										  $.each($('#labelTable .filtros input[type=text]'), function(key, item){
 												params[item.name] = item.value;
 										  });
+										  params["order_state"] = $("#labelTable #order_state").val();
 										  $.ajax(
 												{
 													url: '{/literal}{$ps_base_uri|escape:'htmlall':'UTF-8'}{literal}seur/ajax/getLabelAjax.php',

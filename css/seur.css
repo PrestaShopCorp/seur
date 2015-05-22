@@ -62,7 +62,7 @@
 #seur_module #config .configuration_tabs #tab_webservices .submit{padding-left: 125px;padding-top: 10px;}
 #outputUser{padding-top: 10px;font-weight: bold;display: block;line-height: 15px;margin-top: -5px;padding-left: 50px;width: 200px;text-align: center;}
 
-/* Versión 4 y 5 */
+/* Version 4 y 5 */
 #seur_module fieldset{color:#4C4C4C}
 #seur_module fieldset legend img{ vertical-align: top;}
 #seur_module h1{color:#4C4C4C;text-align: center;font-size: 24px;font-weight: normal;margin-top: 50px;margin-bottom: 30px;}
@@ -91,7 +91,7 @@
 #range_configuration ul li{width: 40%;margin-left: 5%;margin-right: 5%;float: left;}
 .alerta{width: 70%;margin-right: auto;margin-left: auto;background-color: #FFFAC6;border: 1px solid #CCCCCC;padding: 5px;}
 .avisoalerta{color: #FF0000;font-size: 13px;background: url('../img/ico_aviso.png') no-repeat 5px 0px transparent;padding-left: 50px;line-height: 15px;padding-right: 5px}
-.alertaconfiguracion{border: 1px solid #CCCCCC;color: #FF0000;font-size: 13px;background: url('../img/ico_aviso.png') no-repeat 10px 10px #FFFAC6;padding-left: 60px !important;line-height: 20px;padding-right: 5px !important;padding-bottom: 20px !important;padding-top: 20px !important;margin-bottom: 40px !important;}
+.alertaconfiguracion{border: 1px solid #CCCCCC;color: #FF0000;font-size: 13px;background: url('../img/ico_aviso.png') no-repeat 10px 10px #FFFAC6;padding-left: 60px !important;line-height: 20px;padding-right: 5px !important;padding-bottom: 20px !important;padding-top: 20px !important;margin-bottom: 40px !important; width: 80%;}
 #message_international_orders,#msgenviosgratis,#aditional_cost_sms,.alertasoap{border: 1px solid #CCCCCC;font-size: 13px;color: #FF0000;line-height: 25px;background-color: #FFFAC6;overflow: hidden;}
 #message_international_orders p,#msgenviosgratis p,#aditional_cost_sms p,.alertasoap p{padding-left: 20px;padding-top: 10px;line-height: 15px;padding-bottom: 10px;color: #FF0000}
 #msgenviosgratis{width:425px;margin-left: 240px;}
@@ -160,7 +160,8 @@ fieldset#cashondeliveryseur legend{border: none;background-color: #F2F2F2;color:
 #nBultos label,#pBultos label{width: 150px;}
 #nBultos input,#pBultos input{width: 50px;}
 fieldset#cashondeliveryseur .save_codfee,fieldset#detalleseur .buttonguardar{ background-color: #A9C813;background-image: linear-gradient(to bottom, #A9C813, #778E30);border: 1px solid #7F9A52;border-radius: 1px 1px 1px 1px;box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);color: #FFFFFF;font-family: arial,helvetica,sans-serif;font-size: 16px;padding: 7px;
-text-align: center;text-decoration: none;text-shadow: 1px 1px 2px #000000;cursor: pointer;width: 120px;position: absolute;right: 20px;top:160px;}
+text-align: center;text-decoration: none;text-shadow: 1px 1px 2px #000000;cursor: pointer;width: 120px;position: absolute;right: 20px;top:20px;}
+
 fieldset#detalleseur .buttonguardar:hover{background-image: linear-gradient(to bottom, #90AB17, #90AB17); background-color: #90AB17;	}
 fieldset#detalleseur .tarifa,#fichaPedidoSeur #desgloseCosteEnvio,.pudos{background: url('../img/line.png') repeat-x 0px 10px transparent;padding-top: 50px;line-height: 26px;}
 fieldset#detalleseur .tarifa img{padding-left: 15px;cursor: pointer;}
@@ -168,7 +169,26 @@ fieldset#detalleseur .tarifa img{padding-left: 15px;cursor: pointer;}
 
 div.pudos table.ver14{ width: 400px; }
 
-fieldset#cashondeliveryseur .edit_codfee,fieldset#detalleseur .buttongenerar,fieldset#detalleseur input.buttonprint{background-color: #595959;background-image: linear-gradient(to bottom, #595959, #262626);border: 1px solid #000000;border-radius: 1px 1px 1px 1px;box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);color: #FFFFFF;font-family: arial,helvetica,sans-serif;font-size: 16px;padding: 7px;text-align: center;text-decoration: none;text-shadow: 1px 1px 2px #000000;	cursor: pointer;float:left;width: 120px;position: absolute;right: 20px;top:205px}
+fieldset#cashondeliveryseur .edit_codfee,fieldset#detalleseur .buttongenerar,fieldset#detalleseur input.buttonprint{
+	background-color: #595959;
+    background-image: linear-gradient(to bottom, #595959, #262626);
+    border: 1px solid #000000;
+    border-radius: 1px;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    color: #ffffff;
+    cursor: pointer;
+    font-family: arial,helvetica,sans-serif;
+    font-size: 16px;
+    margin-right: 20px;
+    top: 74px;
+    padding: 7px;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    text-decoration: none;
+    text-shadow: 1px 1px 2px #000000;
+    width: 120px;
+}
 fieldset#cashondeliveryseur .edit_codfee,fieldset#cashondeliveryseur .save_codfee{position:relative; top:auto;float:right;}
 fieldset#detalleseur input.buttonprint{width: 150px}
 fieldset#detalleseur .buttongenerar:hover,fieldset#detalleseur input.buttonprint:hover{background-image: linear-gradient(to bottom, #000, #000); background-color: #000;}
@@ -226,6 +246,7 @@ table#labelTable #start_date_order, table#labelTable #end_date_order{max-width:1
 #content #detalleseur legend{background-image: none}
 
 #downloadmanual{position: absolute;top:88px;left: 200px}
+#downloadmanual-seur{left: 440px; position: absolute; top: 224px;}
 
 
 #manual_download {background-image: linear-gradient(to bottom, #595959, #262626);border: 1px solid #000000;border-radius: 1px 1px 1px 1px;box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);color: #FFFFFF;font-family: arial,helvetica,sans-serif;font-size: 16px;padding: 10px;text-align: center;text-decoration: none;text-shadow: 1px 1px 2px #000000;cursor: pointer;width: 120px;padding-left: 10px;line-height: 26px;display: block;margin-left: auto;margin-right: auto;}

@@ -50,18 +50,19 @@ try
 	$city = Tools::getValue('city', null);
 	$country = Tools::getValue('country', null);
 	$state = Tools::getValue('state', null);
+	$order_state = Tools::getValue('order_state', null);
 	$content = '';
-								$orders = getAllOrders($id, $reference, $start_date, $end_date, $name, $address, $postcode, $city, $state, $country);
+								$orders = getAllOrders($id, $reference, $start_date, $end_date, $name, $address, $postcode, $city, $state, $country, $order_state);
 								if (is_array($orders) && !empty($orders))
 								{
-										foreach($orders as $order)
-										$content  .= '<tr><td>'.$order['id_order'].'</td><td>'.$order['reference'].'</td><td>'.date('d-m-Y H:i:s', strtotime($order['date_add'])).'</td><td>'.$order['firstname'].' '.$order['lastname'].' </td><td>'.$order['address1'].' '.$order['address2'].' </td><td>'.$order['postcode'].' </td><td>'.$order['city'].' </td><td>'.$order['state'].' </td><td>'.$order['country'].' </td><td><input type="checkbox" name="id_orders[]" value="'.$order['id_order'].'"/></td><td></td></tr>';	
+									foreach($orders as $order)
+										$content  .= '<tr><td>'.$order['id_order'].'</td><td>'.$order['reference'].'</td><td>'.date('d-m-Y H:i:s', strtotime($order['date_add'])).'</td><td>'.$order['firstname'].' '.$order['lastname'].' </td><td>'.$order['address1'].' '.$order['address2'].' </td><td>'.$order['postcode'].' </td><td>'.$order['city'].' </td><td>'.$order['state'].' </td><td>'.$order['country'].' </td><td>'.$order['current_state'].'</td><td style="text-align:center;"><input type="checkbox" name="id_orders[]" value="'.$order['id_order'].'"/></td><td></td></tr>';	
 								
-									 	$content  .= '<tr><td colspan="10"></td><td colspan="1"><input class="button btnTab" type="submit"  value="Imprimir etiqueta"></td></tr>';	
+									 	$content  .= '<tr><td colspan="11"></td><td colspan="1"><input class="button btnTab" type="submit"  value="Imprimir etiqueta"></td></tr>';	
 								}
 								else
 								{
-									$content  .= '<tr><td colspan="11">'.$module_instance->l('Not results found').'</td></tr>';
+									$content  .= '<tr><td colspan="12">'.$module_instance->l('Not results found').'</td></tr>';
 									// .getQuery($id, $reference, $start_date, $end_date, $name, $address, $postal_code, $city, $state_name, $country).'</td></tr>';	
 								}
 					
@@ -69,7 +70,7 @@ try
 }
 catch (PrestaShopException $e)
 {
-					$content  .= '<tr><td colspan="11">'.$module_instance ->l('Error to extract data, please try later').$e->getMessage().'</td></tr>';	
+					$content  .= '<tr><td colspan="12">'.$module_instance ->l('Error to extract data, please try later').$e->getMessage().'</td></tr>';	
 					
 }
 
@@ -78,17 +79,17 @@ $out['response'] = $content;
 echo Tools::jsonEncode($out);
 die();
 	
-	function getAllOrders($id = null, $reference = null, $date_start = null, $date_end = null, $name = null, $address = null, $postal_code = null, $city  = null, $state_name = null, $country = null)
+	function getAllOrders($id = null, $reference = null, $date_start = null, $date_end = null, $name = null, $address = null, $postal_code = null, $city  = null, $state_name = null, $country = null, $order_state = null)
 	{
-		$sql = getQuery($id, $reference, $date_start, $date_end, $name, $address, $postal_code, $city, $state_name, $country);
+		$sql = getQuery($id, $reference, $date_start, $date_end, $name, $address, $postal_code, $city, $state_name, $country, $order_state);
 		
 		return DB::getInstance()->executeS($sql);
 	
 	}
-	function getQuery($id = null, $reference = null, $date_start = null, $date_end = null, $name = null, $address = null, $postal_code = null, $city  = null, $state_name = null, $country = null)
+	function getQuery($id = null, $reference = null, $date_start = null, $date_end = null, $name = null, $address = null, $postal_code = null, $city  = null, $state_name = null, $country = null, $order_state = null)
 	{
 		$context = Context::getContext();
-		$sql = 'SELECT o.reference,o.id_order,o.date_add,o.reference, a.firstname, a.lastname, a.address1, a.address2, a.postcode, a.city, cl.name as country, s.name as state FROM '._DB_PREFIX_.'orders o INNER JOIN '._DB_PREFIX_.'seur_order so ON so.id_order  = o.id_order  INNER JOIN '._DB_PREFIX_.'address a ON o.id_address_delivery = a.id_address INNER JOIN '._DB_PREFIX_.'country_lang cl ON cl.id_country = a.id_country AND cl.id_lang ='.(int)$context->language->id.' LEFT JOIN '._DB_PREFIX_.'state s ON s.id_state = a.id_state ';
+		$sql = 'SELECT o.reference,o.id_order,o.date_add,o.reference, a.firstname, a.lastname, a.address1, a.address2, a.postcode, a.city, cl.name as country, s.name as state, os.name as current_state FROM '._DB_PREFIX_.'orders o INNER JOIN '._DB_PREFIX_.'seur_order so ON so.id_order  = o.id_order  INNER JOIN '._DB_PREFIX_.'address a ON o.id_address_delivery = a.id_address INNER JOIN '._DB_PREFIX_.'country_lang cl ON cl.id_country = a.id_country AND cl.id_lang ='.(int)$context->language->id.' LEFT JOIN '._DB_PREFIX_.'state s ON s.id_state = a.id_state LEFT JOIN '._DB_PREFIX_.'order_state_lang os ON os.id_order_state=o.current_state AND os.id_lang='.(int)$context->language->id;
 		$where = array();
 		if ((int)$id > 0)
 			$where[] = ' o.id_order ='.(int)$id.' ';
@@ -129,6 +130,9 @@ die();
 		
 		if (trim($country) != ''  )
 			$where[] = ' cl.name like \'%'.pSQL($country).'%\'   ';
+		
+		if (trim($order_state) != ''  )
+			$where[] = ' os.id_order_state = '.pSQL($order_state).'   ';
 		
 		if(!empty($where))
 			$sql.= ' WHERE '.implode(' AND ', $where);

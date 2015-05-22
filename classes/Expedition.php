@@ -64,7 +64,7 @@ class Expedition
 			);
 			
 			$response = $soap_client->consultaListadoExpedicionesStr($data);
-
+			
 			if (empty($response->out))
 				return false;
 		}

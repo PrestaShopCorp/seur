@@ -50,6 +50,7 @@ $_MODULE['<{seur}prestashop>adminseur_9a360f601520ed4ac4b189653639b9cd'] = 'Desd
 $_MODULE['<{seur}prestashop>adminseur_3ac951fa50bfee3a2c0b93c24bc4e713'] = 'Hasta';
 $_MODULE['<{seur}prestashop>adminseur_c28d892ff61fa9c1d23b22c24305096f'] = 'Filtrar';
 $_MODULE['<{seur}prestashop>adminseur_b52e0a313e6646e9c2646dec768615ed'] = 'El documento ya ha sido imprimido, pero no se encuentra en el directorio, revise los permisos de las carpetas de su servidor';
+$_MODULE['<{seur}prestashop>adminseur_d02bbc3cb147c272b0445ac5ca7d1a36'] = 'Estado pedido';
 $_MODULE['<{seur}prestashop>seur_b18c55a0468d0ede3b0c27a54cb7a075'] = 'SEUR';
 $_MODULE['<{seur}prestashop>seur_94341d5e96f821356fc905f77c65eaa7'] = 'Administre sus envíos con SEUR. Líder en el Envío Express, Nacional o Internacional.';
 $_MODULE['<{seur}prestashop>seur_47a71944c58ecf5b83d85432a98d0ab8'] = 'La extensión SOAP no está disponible en su servidor, por favor contacte con su proveedor de hosting para que la active.';

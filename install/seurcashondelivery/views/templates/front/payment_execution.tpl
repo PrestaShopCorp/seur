@@ -49,7 +49,7 @@
         <div class="clear">
         <p style="margin-top:20px;">
                 - {l s='Additional fee:' mod='seurcashondelivery'}
-                <span id="amount" class="price">{displayPrice price=$cargo|floatval}</span>
+                <span id="amount" class="price">{displayPrice price=$cart_Amount|floatval}</span>
                 {if $use_taxes == 1}
                 {l s='(IVA Incl.)' mod='seurcashondelivery'}
             {/if}

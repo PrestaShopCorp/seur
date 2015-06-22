@@ -28,7 +28,7 @@
 		<img src="{$ruta|escape:'htmlall':'UTF-8'}img/logoSeur.png" alt="{l s='Cash on delivery by SEUR' mod='seurcashondelivery'}" width="86" height="49" border="0" />
 		{l s='Cash on delivery by SEUR' mod='seurcashondelivery'}
 		{l s='Cost:' mod='seurcashondelivery'} {convertPrice price=$coste|floatval}
-		{l s='Fee:' mod='seurcashondelivery'} {convertPrice price=$cargo}
+		{l s='Fee:' mod='seurcashondelivery'} {convertPrice price=$cart_Amount}
 		<strong>{l s='Total:' mod='seurcashondelivery'} {convertPrice price=$total|floatval}</strong>
 	</a>
 </p>

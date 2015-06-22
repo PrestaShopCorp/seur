@@ -75,10 +75,10 @@ if (!Validate::isLoadedObject($customer))
 $currency = new Currency(Tools::getValue('currency_payement', false) ? Tools::getValue('currency_payement') : $cookie->id_currency);
 
 $coste = (float)(abs($cart->getOrderTotal(true, Cart::BOTH)));
-$cargo = number_format($reembolsocargo->calculateCargo($cart, false) , 2, '.', '');
+$cart_Amount = number_format($reembolsocargo->calculateCartAmount($cart, false) , 2, '.', '');
 $vales = (float)(abs($cart->getOrderTotal(true, Cart::ONLY_DISCOUNTS)));
 
-$total = $coste + $cargo;
+$total = $coste + $cart_Amount;
 
 $mailVars = array(
 	'{bankwire_owner}' => Configuration::get('SEUR_TRANSCAR_OWNER'),
@@ -87,5 +87,5 @@ $mailVars = array(
 );
 $order = new Order($reembolsocargo->currentOrder);
 $reembolsocargo->validateOrderFORWEBS_v4((int)$cart->id, 3, (float)$total, $reembolsocargo->displayName, NULL, $mailVars, (int)$currency->id, false, $customer->secure_key);
-SeurLib::setSeurOrder((int)$order->id, 1, $order->weight, null,$reembolsocargo->calculateCargo($cart));
+SeurLib::setSeurOrder((int)$order->id, 1, $order->weight, null,$reembolsocargo->calculateCartAmount($cart));
 Tools::redirectLink(__PS_BASE_URI__.'order-confirmation.php?id_cart='.(int)$cart->id.'&id_module='.(int)$reembolsocargo->id.'&id_order='.(int)$reembolsocargo->currentOrder.'&key='.urlencode($customer->secure_key));

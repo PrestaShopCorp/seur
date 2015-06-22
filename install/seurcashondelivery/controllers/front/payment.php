@@ -47,8 +47,8 @@ class SeurCashOnDeliveryPaymentModuleFrontController extends ModuleFrontControll
 
 		$this->context->smarty->assign(array(
 			'nbProducts' => $cart->nbProducts(),
-			'cargo' => $this->module->calculateCargo($cart),
-            'total' => $cart->getOrderTotal(true, Cart::BOTH)+$this->module->calculateCargo($cart),
+			'cargo' => $this->module->calculateCartAmount($cart),
+            'total' => $cart->getOrderTotal(true, Cart::BOTH)+$this->module->calculateCartAmount($cart),
 			'this_path' => $this->module->getPathUri(),
 			'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->module->name.'/'
 		));

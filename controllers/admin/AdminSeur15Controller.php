@@ -36,9 +36,10 @@ class AdminSeur15Controller extends ModuleAdminController {
 	
 	public function __construct()
 	{
-	parent::__construct();
-	$this->module = Module::getInstanceByName('seur');
+		parent::__construct();
+		$this->module = Module::getInstanceByName('seur');
 	}
+	
 	public function initContent()
 	{		
 		$admin_seur = new AdminSeur(false);
@@ -229,6 +230,7 @@ class AdminSeur15Controller extends ModuleAdminController {
 		
 		$this->context->smarty->assign($params);
 	}
+	
 	public function displayModuleConfigurationWarning()
 	{
 		if (!version_compare(_PS_VERSION_, '1.5', '<'))
@@ -243,6 +245,7 @@ class AdminSeur15Controller extends ModuleAdminController {
 		));
 		return $this->context->smarty->fetch(_PS_MODULE_DIR_.'seur/views/templates/admin/warning_message.tpl');
 	}
+	
 	public function getExpeditionData()
 	{
 		$expedition_data = array();
@@ -266,6 +269,7 @@ class AdminSeur15Controller extends ModuleAdminController {
 			$expedition_data['order_state'] = Tools::getValue('order_state');
 		return $expedition_data;
 	}
+	
 	public function getAllOrders($id = null, $reference = null, $date_start = null, $date_end = null, $name = null, $address = null, $postal_code = null, $city = null, $state_name = null, $country = null, $order_state = null)
 	{
 		$sql = 'SELECT o.reference,o.id_order,o.date_add,o.reference, a.firstname, a.lastname, a.address1, a.address2, a.postcode, a.city, cl.name as country, s.name as state, os.name as current_state FROM '._DB_PREFIX_.'orders o INNER JOIN '._DB_PREFIX_.'seur_order so ON so.id_order  = o.id_order  INNER JOIN '._DB_PREFIX_.'address a ON o.id_address_delivery = a.id_address INNER JOIN '._DB_PREFIX_.'country_lang cl ON cl.id_country = a.id_country AND cl.id_lang ='.(int)$this->context->language->id.' LEFT JOIN '._DB_PREFIX_.'state s ON s.id_state = a.id_state LEFT JOIN '._DB_PREFIX_.'order_state_lang os ON os.id_order_state=o.current_state AND os.id_lang='.(int)$this->context->language->id;
@@ -341,27 +345,10 @@ class AdminSeur15Controller extends ModuleAdminController {
 								$data_label = $this->getLabelData($id_order);
 								if (is_array($data_label))
 								{
-								
-									// if ($this->isPrinted((int)$id_order, true))
-									// {
-									// $success = true;
-									// }
-									// else
-									// {
-									// echo $name;
 									$success = Label::createLabels($data_label, 'zebra');
-									// }
-								
 									if ($success === true)
-									{
-									
-										// if ($this->setAsPrinted((int)$id_order, true))
-												// $this->printLabel((int)array($id_order), 'txt');
 										$this->setAsPrinted((int)$id_order, true);		
-									}
-							
 							}
-						
 						}
 					}
 				if (is_array($id_orders))
@@ -389,14 +376,13 @@ class AdminSeur15Controller extends ModuleAdminController {
 					echo $fp;
 				}
 			}
-		
 		}
 		catch(Exception $e)
 		{
 			echo $e->getMessage();
 		}
 		exit;	
-		$this->context->smarty->assign('error', $this->l('Document was already printed, but is missing in module directory'));
+		$this->context->smarty->assign('error', $this->l('Document was already printed, but is missing in module directory', 'AdminSeur15'));
 	}
 	
 	private function isPrinted($id_order, $label = false)

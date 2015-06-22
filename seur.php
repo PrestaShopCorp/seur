@@ -764,87 +764,61 @@ class Seur extends CarrierModule
 		# the ps14 way
 	return 'index.php?tab='.$tab.'&configure='.$this->name.'&token='.Tools::getAdminToken($tab.(int)(Tab::getIdFromClassName($tab)).(int)$this->context->cookie->id_employee);
 	}
-	public function calculateCargo($cart, $check_id_currency = true)
+	public function calculateCartAmount($cart, $check_id_currency = true)
 	{
- 		$minimo = Configuration::get('SEUR_REMCAR_CARGO_MIN');
- 		$minimo = str_replace(',','.',$minimo);
+ 		$minimun_Amount = Configuration::get('SEUR_REMCAR_CARGO_MIN');
+ 		$minimun_Amount = str_replace(',','.',$minimun_Amount);
 
 		if ($check_id_currency && $cart->id_currency != Configuration::get('PS_CURRENCY_DEFAULT'))
-			$minimo = Tools::convertPrice($minimo, new Currency((int)$cart->id_currency));
+			$minimun_Amount = Tools::convertPrice($minimun_Amount, new Currency((int)$cart->id_currency));
 
- 		$total_carrito = (float)($cart->getOrderTotal(true, Cart::BOTH));
- 		$porcentaje = Configuration::get('SEUR_REMCAR_CARGO');
+ 		$total_cartAmount = (float)($cart->getOrderTotal(true, Cart::BOTH));
+ 		$percentage_apply = Configuration::get('SEUR_REMCAR_CARGO');
  	
-		$porcentaje = str_replace(',','.',$porcentaje);
-		$porcentaje = $porcentaje / 100;
- 		$cargo = $total_carrito * $porcentaje;
+		$percentage_apply = str_replace(',','.',$percentage_apply);
+		$percentage_apply = $percentage_apply / 100;
+ 		$cart_Amount = $total_cartAmount * $percentage_apply;
 
- 		if ($cargo < $minimo)
-			$cargo = $minimo;
+ 		if ($cart_Amount < $minimun_Amount)
+			$cart_Amount = $minimun_Amount;
 
- 		return (float)($cargo);
+ 		return (float)($cart_Amount);
 	}
+	
 	public function hookAdminOrder($params)
 	{
 		$versionSpecialClass = '';
-
 		if (!file_exists(_PS_MODULE_DIR_.'seur/img/logonew_32.png') && file_exists(_PS_MODULE_DIR_.'seur/img/logonew.png'))
 			ImageManager::resize(_PS_MODULE_DIR_.'seur/img/logonew.png', _PS_MODULE_DIR_.'seur/img/logonew_32.png', 32, 32, 'png');
-
 		if (version_compare(_PS_VERSION_, '1.5', '<'))
 			$versionSpecialClass = 'ver14';
-		
 		$this->displayWarning();
-		
 		if (Configuration::get('SEUR_Configured') == 1)
 		{
 			$cookie = $this->context->cookie;
-
 			$token = Tools::getValue('token');
 			$back = Tools::safeOutput($_SERVER['REQUEST_URI']);
-
 			$seur_carriers = SeurLib::getSeurCarriers(false);
 			$ids_seur_carriers = array();
-
 			foreach ($seur_carriers as $value)
 				$ids_seur_carriers[] = (int)$value['id'];
-
 			$order = new Order((int)$params['id_order']);
-			
-			$address_saved = DB::getInstance()->getValue('
-				SELECT `id_address_delivery`
-				FROM `'._DB_PREFIX_.'seur_order`
-				WHERE `id_order` = "'.(int)$order->id.'"
-			');
-			
-			$pickup_carrier = DB::getInstance()->getValue('
-				SELECT `id_seur_carrier`
-				FROM `'._DB_PREFIX_.'seur_history`
-				WHERE `type` = "SEP" AND `active` = 1
-			');			
-
+			$address_saved = DB::getInstance()->getValue('SELECT `id_address_delivery` FROM `'._DB_PREFIX_.'seur_order`	WHERE `id_order` = "'.(int)$order->id.'"');
+			$pickup_carrier = DB::getInstance()->getValue('SELECT `id_seur_carrier`	FROM `'._DB_PREFIX_.'seur_history` WHERE `type` = "SEP" AND `active` = 1');			
 			if ($address_saved === '0' && $pickup_carrier === $order->id_carrier)
 				$this->context->smarty->assign('pickup_point_warning', true);
-			
 			if (!Validate::isLoadedObject($order))
 				return false;
-			
 			$delivery_price = $order_weigth = 0;
 			$products = $order->getProductsDetail();
-
 			foreach ($products as $product)
 				$order_weigth += (float)$product['product_weight'] * (float)$product['product_quantity'];
-
 			$order_weigth = ($order_weigth < 1.0 ? 1.0 : (float)$order_weigth);
-
 			$customer = new Customer((int)$order->id_customer);
 			$address_delivery = new Address((int)$order->id_address_delivery, (int)$cookie->id_lang);
-			
 			if (!Validate::isLoadedObject($address_delivery))
 				return false;
-			
 			$iso_country = Country::getIsoById((int)$address_delivery->id_country);
-
 			if ($iso_country == 'PT')
 			{
 				$post_code = explode(' ', $address_delivery->postcode);
@@ -852,7 +826,6 @@ class Seur extends CarrierModule
 			}
 			else
 				$post_code = $address_delivery->postcode;
-
 			$international_orders = SeurLib::getConfigurationField('international_orders');
 			$date_calculate = strtotime('-14 day', strtotime(date('Y-m-d')));
 			$date_display = date('Y-m-d H:m:i', $date_calculate);
@@ -861,7 +834,7 @@ class Seur extends CarrierModule
 				if ((!$international_orders && ($iso_country == 'ES' || $iso_country == 'PT' || $iso_country == 'AD')) || $international_orders)
 				{
 					if (!SeurLib::getSeurOrder((int)$order->id))
-						SeurLib::setSeurOrder((int)$order->id, 1, $order_weigth, null,$this->calculateCargo(new Cart($order->id_cart)));
+						SeurLib::setSeurOrder((int)$order->id, 1, $order_weigth, null,$this->calculateCartAmount(new Cart($order->id_cart)));
 					elseif (Tools::getValue('numBultos') && Tools::getValue('pesoBultos'))
 						SeurLib::setSeurOrder((int)$order->id, (int)Tools::getValue('numBultos'), str_replace(',', '.', Tools::getValue('pesoBultos')), null);
 					$order_data = SeurLib::getSeurOrder((int)$order->id);
@@ -880,12 +853,10 @@ class Seur extends CarrierModule
 							$towns[] = utf8_decode((string)$response_post_code->$name->NOM_POBLACION);
 						}
 					}
-
 					$name = $address_delivery->firstname.' '.$address_delivery->lastname;
 					$direccion = $address_delivery->address1.' '.$address_delivery->address2;
 					$newcountry = new Country((int)$address_delivery->id_country, (int)$cookie->id_lang);
 					$iso_merchant = SeurLib::getMerchantField('country');
-
 					$rate_data = array(
 						'town' => $address_delivery->city,
 						'peso' => (float)$order_weigth,
@@ -899,11 +870,9 @@ class Seur extends CarrierModule
 						'token' => Tools::getAdminTokenLite('AdminOrders'),
 						'back' => $back
 					);
-					
 					$order_messages_str = '';
 					$info_adicional_str = $address_delivery->other;
 					$order_messages = Message::getMessagesByOrderId((int)$params['id_order']);
-
 					if (is_array($order_messages))
 					{
 						foreach ($order_messages as $order_messag_tmp)
@@ -917,10 +886,8 @@ class Seur extends CarrierModule
 
 						$order_messages_str = trim($order_messages_str);
 					}
-
 					if (!empty($order_messages_str))
 						$info_adicional_str = $order_messages_str;
-
 					$label_data = array(
 						'pedido' => sprintf('%06d', (int)$order->id),
 						'total_bultos' => $order_data['numero_bultos'],
@@ -943,21 +910,17 @@ class Seur extends CarrierModule
 						'token' => Tools::getAdminTokenLite('AdminOrders'),
 						'back' => $back
 					);
-
 					if (strcmp($order->module, 'seurcashondelivery') == 0)
 					{
 						$rate_data['reembolso'] = (float)$order_data['total_paid'];
 						$label_data['reembolso'] = (float)$order_data['total_paid'];
 					}
-
 					$carrier_pos = SeurLib::getSeurCarrier('SEP');
 					$datospos = '';
 					if ((int)$order->id_carrier == $carrier_pos['id'])
 					{
 						$datospos = SeurLib::getOrderPos((int)$order->id_cart);
-						
 						$this->context->smarty->assign(array('carrier_pos' => $carrier_pos));
-
 						if (!empty($datospos))
 						{
 							$label_data = array(
@@ -982,9 +945,7 @@ class Seur extends CarrierModule
 							$rate_data['cod_centro'] = $datospos['id_seur_pos'];
 						}
 					}
-
 					$rate = 0;
-					
 					if ($iso_country == 'ES' || $iso_country == 'PT' || $iso_country == 'AD')
 					{
 						$xml = Rate::getPrivateRate($rate_data);
@@ -992,14 +953,11 @@ class Seur extends CarrierModule
 						if (is_object($xml))
 							foreach ($xml as $tarifa)
 							{
-									$delivery_price += (float)$tarifa->VALOR;
-									if($tarifa->COD_CONCEPTO_IMP == 70)
-									$rate = $tarifa->VALOR;	
-						
+								$delivery_price += (float)$tarifa->VALOR;
+								if($tarifa->COD_CONCEPTO_IMP == 70)
+								$rate = $tarifa->VALOR;	
 							}
-								
 					}
-
 					if (Tools::getValue('submitLabel'))
 					{
 						if ($this->isPrinted((int)$order->id))
@@ -1035,28 +993,22 @@ class Seur extends CarrierModule
 						else
 							$this->context->smarty->assign('error', $success);
 					}
-
 					$seur_carriers = SeurLib::getSeurCarriers(false);
-
 					$pickup = Pickup::getLastPickup();
-
 					if (!empty($pickup))
 					{
 						$pickup_date = explode(' ', $pickup['date']);
 						$pickup_date = $pickup_date[0];
 					}
-
 					$address_error = 0;
 					if (!empty($towns) && !in_array(mb_strtoupper($this->replaceAccentedChars($address_delivery->city), 'UTF-8'), $towns))
 						$address_error = 1;
-						
 					$pickup_s = 0;
 					if ($pickup && strtotime(date('Y-m-d')) >= strtotime($pickup_date))
 						$pickup_s = 1;
 					$state = Expedition::getExpeditions(array('reference_number' => sprintf('%06d', (int)$order->id)));
 					$is_empty_state = false;
 					$xml_s = false;
-					
 					if (empty($state->out))
 						$is_empty_state = true;
 					else
@@ -1068,7 +1020,6 @@ class Seur extends CarrierModule
 						if(!$xml_s->EXPEDICION)
 							$is_empty_state = true;
 					}
-					
 					$rate_data_ajax = Tools::jsonEncode($rate_data);
 					$path = '../modules/seur/js/';
 					$file = (Configuration::get('PS_SSL_ENABLED') ? 'https://' : 'http://').$_SERVER['HTTP_HOST'].__PS_BASE_URI__.'modules/seur/files/deliveries_labels/'.sprintf('%06d', (int)$order->id).'.txt';
@@ -1102,7 +1053,6 @@ class Seur extends CarrierModule
 						'configured' => (int)Configuration::get('SEUR_Configured'),
 						'printed' => (bool)($this->isPrinted((int)$order->id) || $this->isPrinted((int)$order->id, true))
 					));
-
 					return $this->display(__FILE__, 'views/templates/admin/orders.tpl');
 				}
 			}
@@ -1119,7 +1069,6 @@ class Seur extends CarrierModule
 				'path' => $this->_path,
 				'configuration_warning_message' => $configuration_warning_message
 			));
-
 			return $this->display(__FILE__, 'views/templates/admin/orders.tpl');
 		}
 	}
@@ -1384,11 +1333,7 @@ class Seur extends CarrierModule
 			return $this->display(__FILE__, 'views/templates/hook/seur.tpl');
 		}
 	}
-	public function hookActionCarrierProcess($params)
-	{
-		
 	
-	}
 	private function setCarriersGroups($id_carrier, $delete = false)
 	{
 		if ($id_carrier == 0)
@@ -1482,10 +1427,10 @@ class Seur extends CarrierModule
 
 			$this->context->controller->addCSS($this->_path.'css/seur.css');
 
-			if ($tab == 'AdminSeur15' || $tab == 'adminseur15')
+			if ($tab == 'adminseur15')
 				$this->context->controller->addJS($this->_path.'js/seurToolsAdmin.js');
 
-			if ($tab == 'AdminOrders' || $tab == 'adminorders')
+			if ($tab == 'adminorders')
 			{
 				$this->context->controller->addJS($this->_path.'js/seurToolsOrder.js');
 				$this->context->controller->addJS($this->_path.'js/html2canvas.js');

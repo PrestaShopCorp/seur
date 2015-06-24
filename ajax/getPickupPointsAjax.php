@@ -67,7 +67,7 @@ if (Tools::getValue('id_address_delivery'))
 		$soap_client = new SoapClient((string)Configuration::get('SEUR_URLWS_SP'), $sc_options);
 		$xml = '
 			<CAMPOS>
-				<CODIGO_POSTAL>'.str_pad($address_delivery->postcode, 4, '0', STR_PAD_LEFT).'</CODIGO_POSTAL>
+				<CODIGO_POSTAL>'.(int)$address_delivery->postcode.'</CODIGO_POSTAL>
 				<NOM_CORTO></NOM_CORTO>
 				<LATITUD></LATITUD>
 				<LONGITUD></LONGITUD>

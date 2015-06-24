@@ -44,9 +44,7 @@ CREATE TABLE IF NOT EXISTS `PREFIX_seur_order` (
 `imprimido` varchar(5),
 `printed_label` int(1) NOT NULL,
 `printed_pdf` int(1) NOT NULL,
-`codfee` decimal(13,6),
 `id_address_delivery` varchar(10),
-`total_paid` decimal(20,6),
 PRIMARY KEY (`id_order`)
 ) ENGINE=ENGINE_TYPE DEFAULT CHARSET=utf8;
 

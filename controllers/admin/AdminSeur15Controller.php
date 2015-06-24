@@ -29,10 +29,10 @@ if (!defined('_PS_VERSION_'))
 	exit;
 
 require_once(_PS_MODULE_DIR_.'seur/AdminSeur.php');
-require_once(_PS_MODULE_DIR_.'seur/classes/Expedition.php');
 
 class AdminSeur15Controller extends ModuleAdminController {
 
+<<<<<<< HEAD
 	
 	public function __construct()
 	{
@@ -40,41 +40,45 @@ class AdminSeur15Controller extends ModuleAdminController {
 		$this->module = Module::getInstanceByName('seur');
 	}
 	
+=======
+>>>>>>> upstream/master
 	public function initContent()
 	{		
 		$admin_seur = new AdminSeur(false);
 
 		if (!$admin_seur->module_enabled_and_configured)
 		{
-			parent::initContent();
-			$this->content = $this->displayModuleConfigurationWarning();
+			$admin_seur->displayModuleConfigurationWarning();
+			$this->content = $admin_seur->content;
 			return parent::initContent();
 		}
-		else
-		{
-			$this->assignTplVars();
-			$this->content .= $this->context->smarty->fetch(_PS_MODULE_DIR_.'seur/views/templates/admin/AdminSeur.tpl');
-		}
-		
-		parent::initContent();
+
 		$this->display = 'view';
+<<<<<<< HEAD
 		
+=======
+		$this->module_instance = Module::getInstanceByName('seur');
+
+		Context::getContext()->controller->addJqueryUI('ui.datepicker');
+
+>>>>>>> upstream/master
 		if (Tools::getValue('verDetalle'))
 		{
-			$response = Expedition::getExpeditions($this->getExpeditionData());
-			$this->assignTplVars($response, true);
+			$response = Expedition::getExpeditions($admin_seur->getExpeditionData());
+			$this->tpl_view_vars = array('datos' => $admin_seur->displayFormDeliveries($response, true));
 		}
 		elseif (Tools::getValue('createPickup'))
 		{
 			$error_response = Pickup::createPickup();
 
 			if (!empty($error_response))
-				$this->assignTplVars(null, null, $error_response);
+				$this->tpl_view_vars = array('datos' => $admin_seur->displayFormDeliveries(null, null, $error_response));
 			else
-				$this->assignTplVars();
+				$this->tpl_view_vars = array('datos' => $admin_seur->displayFormDeliveries());
 		}
 		elseif (Tools::getValue('submitFilter'))
 		{
+<<<<<<< HEAD
 			$response = Expedition::getExpeditions($this->getExpeditionData());
 			$this->assignTplVars($response, false);
 			$this->content = $this->context->smarty->fetch(_PS_MODULE_DIR_.'seur/views/templates/admin/AdminSeur.tpl');
@@ -516,5 +520,17 @@ class AdminSeur15Controller extends ModuleAdminController {
 	public function getPsOrderStates()
 	{
 		return DB::getInstance()->ExecuteS('SELECT id_order_state, name FROM `'._DB_PREFIX_.'order_state_lang` WHERE `id_lang` = '.(int)$this->context->language->id);
+=======
+			$response = Expedition::getExpeditions($admin_seur->getExpeditionData());
+			$this->tpl_view_vars = array('datos' => $admin_seur->displayFormDeliveries($response, false));
+		}
+		else
+			$this->tpl_view_vars = array('datos' => $admin_seur->displayFormDeliveries());
+
+		$this->content = $admin_seur->content;
+		$this->fields_list = $admin_seur->fields_list;
+
+		parent::initContent();
+>>>>>>> upstream/master
 	}
 }

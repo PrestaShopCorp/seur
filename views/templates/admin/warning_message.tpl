@@ -31,7 +31,7 @@
 		{if isset($ps_14) && $ps_14}
 			<img src="{$smarty.const._PS_ADMIN_IMG_|escape:'htmlall':'UTF-8'}warning.gif" alt="{l s='warning' mod='seur'}" />
 		{/if}
-		{$seur_warning_message}
+		{$seur_warning_message|escape:'htmlall':'UTF-8'}
 	</p>
 	{if isset($ps_16) && $ps_16}
 		</div>

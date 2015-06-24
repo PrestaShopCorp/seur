@@ -34,21 +34,13 @@ class Rate
 	{
 		try
 		{
-			$servicio = Configuration::get('SEUR_NACIONAL_SERVICE');
-			$producto = Configuration::get('SEUR_NACIONAL_PRODUCT');
+			$servicio = 31;
+			$producto = 2;
 			$serviciosComplementarios = '';
 
 			if (isset($order_data['reembolso']) && ($order_data['iso'] == 'ES' || $order_data['iso'] == 'PT' || $order_data['iso'] == 'AD'))
 				$serviciosComplementarios = '30;P;'.$order_data['reembolso'];
-		
-				
-			if (SeurLib::getConfigurationField('international_orders') == 1 && ($order_data['iso'] != 'ES' &&
-				$order_data['iso'] != 'PT' && $order_data['iso'] != 'AD'))
-			{
-				$servicio = Configuration::get('SEUR_INTERNACIONAL_SERVICE');
-				$producto = Configuration::get('SEUR_INTERNACIONAL_PRODUCT');		
-			}			
-			
+
 			if (isset($order_data['cod_centro']) && ($order_data['iso'] == 'ES' || $order_data['iso'] == 'PT' || $order_data['iso'] == 'AD'))
 			{
 				$servicio = 1;

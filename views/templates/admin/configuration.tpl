@@ -95,7 +95,36 @@
 						</select>
 						<span class="lihelp">{l s='Select Prestashop carrier to operate as SEUR.' mod='seur'}</span>
 					</li>
-
+					<li id="message_service_nacional_orders"> 
+						<label>{l s='Service' mod='seur'}</label>
+						<select id="service_nacional_orders" name="service_nacional_orders">
+							<option value="003" {if $service_nacional_orders == "003"} selected {/if}>{l s='SEUR - 10' mod='seur'}</option>
+							<option value="007" {if $service_nacional_orders == "007"} selected {/if}>{l s='COURIER' mod='seur'}</option>
+							<option value="009" {if $service_nacional_orders == "009"} selected {/if}>{l s='SEUR 13:30' mod='seur'}</option>
+							<option value="013" {if $service_nacional_orders == "013"} selected {/if}>{l s='SEUR - 72' mod='seur'}</option>
+							<option value="015" {if $service_nacional_orders == "015"} selected {/if}>{l s='S-48' mod='seur'}</option>
+							<option value="017" {if $service_nacional_orders == "017"} selected {/if}>{l s='MARITIMO' mod='seur'}</option>
+							<option value="019" {if $service_nacional_orders == "019"} selected {/if}>{l s='NETEXPRESS' mod='seur'}</option>
+							<option value="031" {if $service_nacional_orders == "031"} selected {/if}>{l s='B2C' mod='seur'}</option>
+							<option value="077" {if $service_nacional_orders == "077"} selected {/if}>{l s='CLASSIC' mod='seur'}</option>
+							<option value="083" {if $service_nacional_orders == "083"} selected {/if}>{l s='SEUR 8:30' mod='seur'}</option>
+						</select>				
+					</li>
+					<li id="message_product_nacional_orders"> 
+						<label>{l s='Product' mod='seur'}</label>
+						<select id="product_nacional_orders" name="product_nacional_orders">
+							<option value="002" {if $product_nacional_orders == "002"} selected {/if}>{l s='ESTANDAR' mod='seur'}</option>
+							<option value="004" {if $product_nacional_orders == "004"} selected {/if}>{l s='MULTIPACK' mod='seur'}</option>
+							<option value="006" {if $product_nacional_orders == "006"} selected {/if}>{l s='MULTI BOX' mod='seur'}</option>
+							<option value="018" {if $product_nacional_orders == "018"} selected {/if}>{l s='FRIO' mod='seur'}</option>
+							<option value="052" {if $product_nacional_orders == "052"} selected {/if}>{l s='MULTI DOC' mod='seur'}</option>
+							<option value="054" {if $product_nacional_orders == "054"} selected {/if}>{l s='DOCUMENTOS' mod='seur'}</option>
+							<option value="070" {if $product_nacional_orders == "070"} selected {/if}>{l s='INTERNACIONAL T' mod='seur'}</option>
+							<option value="072" {if $product_nacional_orders == "072"} selected {/if}>{l s='INTERNACIONAL A' mod='seur'}</option>
+							<option value="108" {if $product_nacional_orders == "108"} selected {/if}>{l s='MUESTRAS' mod='seur'}</option>
+							<option value="118" {if $product_nacional_orders == "118"} selected {/if}>{l s='VINO INTERNACIONAL' mod='seur'}</option>					
+						</select>				
+					</li>
 					<li id="c_m">
 						<label>{l s='SEUR Canary Islands M' mod='seur'}</label>
 						<select id="id_seur_carrier_canarias_m" name="id_seur_carrier_canarias_m"/>
@@ -176,14 +205,43 @@
 					{/if}
 					<span class="lihelp">{l s='Enables shipments outside Spain and Portugal.' mod='seur'}</span>
 				</li>
-
+				<li id="message_service_internacional_orders" {if $configuration_table.international_orders eq 0} class="lihide"{/if}> 
+					<label>{l s='Service' mod='seur'}</label>
+					<select id="service_internacional_orders" name="service_internacional_orders">
+						<option value="003" {if $service_internacional_orders == "003"} selected {/if}>{l s='SEUR - 10' mod='seur'}</option>
+						<option value="007" {if $service_internacional_orders == "007"} selected {/if}>{l s='COURIER' mod='seur'}</option>
+						<option value="009" {if $service_internacional_orders == "009"} selected {/if}>{l s='SEUR 13:30' mod='seur'}</option>
+						<option value="013" {if $service_internacional_orders == "013"} selected {/if}>{l s='SEUR - 72' mod='seur'}</option>
+						<option value="015" {if $service_internacional_orders == "015"} selected {/if}>{l s='S-48' mod='seur'}</option>
+						<option value="017" {if $service_internacional_orders == "017"} selected {/if}>{l s='MARITIMO' mod='seur'}</option>
+						<option value="019" {if $service_internacional_orders == "019"} selected {/if}>{l s='NETEXPRESS' mod='seur'}</option>
+						<option value="031" {if $service_internacional_orders == "031"} selected {/if}>{l s='B2C' mod='seur'}</option>
+						<option value="077" {if $service_internacional_orders == "077"} selected {/if}>{l s='CLASSIC' mod='seur'}</option>
+						<option value="083" {if $service_internacional_orders == "083"} selected {/if}>{l s='SEUR 8:30' mod='seur'}</option>
+					</select>				
+				</li>
+				<li id="message_product_internacional_orders" {if $configuration_table.international_orders eq 0} class="lihide"{/if}> 
+					<label>{l s='Product' mod='seur'}</label>
+					<select id="product_internacional_orders" name="product_internacional_orders">
+						<option value="002" {if $product_internacional_orders == "002"} selected {/if}>{l s='ESTANDAR' mod='seur'}</option>
+						<option value="004" {if $product_internacional_orders == "004"} selected {/if}>{l s='MULTIPACK' mod='seur'}</option>
+						<option value="006" {if $product_internacional_orders == "006"} selected {/if}>{l s='MULTI BOX' mod='seur'}</option>
+						<option value="018" {if $product_internacional_orders == "018"} selected {/if}>{l s='FRIO' mod='seur'}</option>
+						<option value="052" {if $product_internacional_orders == "052"} selected {/if}>{l s='MULTI DOC' mod='seur'}</option>
+						<option value="054" {if $product_internacional_orders == "054"} selected {/if}>{l s='DOCUMENTOS' mod='seur'}</option>
+						<option value="070" {if $product_internacional_orders == "070"} selected {/if}>{l s='INTERNACIONAL T' mod='seur'}</option>
+						<option value="072" {if $product_internacional_orders == "072"} selected {/if}>{l s='INTERNACIONAL A' mod='seur'}</option>
+						<option value="108" {if $product_internacional_orders == "108"} selected {/if}>{l s='MUESTRAS' mod='seur'}</option>
+						<option value="118" {if $product_internacional_orders == "118"} selected {/if}>{l s='VINO INTERNACIONAL' mod='seur'}</option>					
+					</select>				
+				</li>				
 				{if $configuration_table.international_orders eq 0}
 					<li id="message_international_orders" class="invisible warn alertaconfiguracion">
 				{else}
 					<li id="message_international_orders" class="warn alertaconfiguracion">
 				{/if}
 					{l s='International shipments are to Europe excluding Spain, Portugal and Andorra' mod='seur'}
-				</li>
+				</li>				
 				<li class="clear"></li>
 				<li>
 					<label>{l s='Enable Cash on delivery' mod='seur'}</label>

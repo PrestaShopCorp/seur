@@ -97,7 +97,7 @@
 #msgenviosgratis{width:425px;margin-left: 240px;}
 
 /*configuracion*/
-.configuration_menu{margin-top: -25px;width: 565px;margin-left: auto;margin-right: auto;}
+.configuration_menu{margin-top: -25px;display:table;margin-left: auto;margin-right: auto;}
 #seur_module .configuration_menu li{text-align: left;color: #4C4C4C;line-height: 20px;padding-left: 20px;border: none;border-radius: 0px;font-size: 16px;padding: 10px;height: 27px;text-decoration: none;text-shadow: none;width: 140px;float:left;cursor: pointer;margin-left: 10px;margin-right: 10px;background-color: #E6E6E6;background-image: none;padding-left: 15px}
 
 #seur_module .configuration_menu li#tab_configuration:hover,
@@ -153,19 +153,15 @@ text-align: center;text-decoration: none;text-shadow: 1px 1px 2px #000000;width:
 #seur_module .field-help {display: block; line-height: 16px; margin-bottom: 10px; color: gray; font-style: italic; font-size: .9em}
 
 /*DETALLE SEUR*/
-fieldset#detalleseur,fieldset#cashondeliveryseur{border: none;background-color: #F2F2F2;color: #4C4C4C;font-size: 13px;position: relative; min-height: 260px; padding: 10px; margin-bottom: 20px;}
-fieldset#detalleseur legend{ background-color: transparent; border:none; padding: 0px;}
+fieldset#detalleseur,fieldset#cashondeliveryseur{border: none;background-color: #F2F2F2;color: #4C4C4C;font-size: 13px;position: relative; min-height: 160px; padding: 10px; margin-bottom: 20px;}
+fieldset#detalleseur legend{ background-color: transparent; border:none; padding: 0px; position:relative; top:30px;}
+fieldset#detalleseur .warn{margin-top:20px;}
 fieldset#cashondeliveryseur legend{border: none;background-color: #F2F2F2;color: #4C4C4C;padding: 10px}
 #nBultos label,#pBultos label{width: 150px;}
 #nBultos input,#pBultos input{width: 50px;}
-<<<<<<< HEAD
 fieldset#cashondeliveryseur .save_codfee,fieldset#detalleseur .buttonguardar{ background-color: #A9C813;background-image: linear-gradient(to bottom, #A9C813, #778E30);border: 1px solid #7F9A52;border-radius: 1px 1px 1px 1px;box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);color: #FFFFFF;font-family: arial,helvetica,sans-serif;font-size: 16px;padding: 7px;
 text-align: center;text-decoration: none;text-shadow: 1px 1px 2px #000000;cursor: pointer;width: 120px;position: absolute;right: 20px;top:20px;}
 
-=======
-fieldset#detalleseur .buttonguardar{ background-color: #A9C813;background-image: linear-gradient(to bottom, #A9C813, #778E30);border: 1px solid #7F9A52;border-radius: 1px 1px 1px 1px;box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);color: #FFFFFF;font-family: arial,helvetica,sans-serif;font-size: 16px;padding: 7px;
-text-align: center;text-decoration: none;text-shadow: 1px 1px 2px #000000;cursor: pointer;width: 120px;position: absolute;right: 20px;top:160px;}
->>>>>>> upstream/master
 fieldset#detalleseur .buttonguardar:hover{background-image: linear-gradient(to bottom, #90AB17, #90AB17); background-color: #90AB17;	}
 fieldset#detalleseur .tarifa,#fichaPedidoSeur #desgloseCosteEnvio,.pudos{background: url('../img/line.png') repeat-x 0px 10px transparent;padding-top: 50px;line-height: 26px;}
 fieldset#detalleseur .tarifa img{padding-left: 15px;cursor: pointer;}
@@ -173,7 +169,6 @@ fieldset#detalleseur .tarifa img{padding-left: 15px;cursor: pointer;}
 
 div.pudos table.ver14{ width: 400px; }
 
-<<<<<<< HEAD
 fieldset#cashondeliveryseur .edit_codfee,fieldset#detalleseur .buttongenerar,fieldset#detalleseur input.buttonprint{
 	background-color: #595959;
     background-image: linear-gradient(to bottom, #595959, #262626);
@@ -195,9 +190,6 @@ fieldset#cashondeliveryseur .edit_codfee,fieldset#detalleseur .buttongenerar,fie
     width: 120px;
 }
 fieldset#cashondeliveryseur .edit_codfee,fieldset#cashondeliveryseur .save_codfee{position:relative; top:auto;float:right;}
-=======
-fieldset#detalleseur .buttongenerar,fieldset#detalleseur input.buttonprint{background-color: #595959;background-image: linear-gradient(to bottom, #595959, #262626);border: 1px solid #000000;border-radius: 1px 1px 1px 1px;box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);color: #FFFFFF;font-family: arial,helvetica,sans-serif;font-size: 16px;padding: 7px;text-align: center;text-decoration: none;text-shadow: 1px 1px 2px #000000;	cursor: pointer;float:left;width: 120px;position: absolute;right: 20px;top:205px}
->>>>>>> upstream/master
 fieldset#detalleseur input.buttonprint{width: 150px}
 fieldset#detalleseur .buttongenerar:hover,fieldset#detalleseur input.buttonprint:hover{background-image: linear-gradient(to bottom, #000, #000); background-color: #000;}
 #fichaPedidoSeur  #datos_tarifa,#fichaPedidoSeur  #datos_etiquetas,#fichaPedidoSeur #desgloseCosteEnvio{display: none;}
@@ -220,16 +212,17 @@ fieldset#detalleseur .buttongenerar:hover,fieldset#detalleseur input.buttonprint
 .configuration_tabs li.default{ display: block; }
 .configuration_tabs .tab{overflow: hidden;border: thin #999 solid;padding: 15px;display: none;}
 
-table#deliveriesTable{width: 100%;border: solid;border-color: #CCCCCC;border-width: 1px;color: #4C4C4C;}
-table#deliveriesTable .filter{background-color: #595959;background-image: linear-gradient(to bottom, #595959, #262626);border: 1px solid #000000;border-radius: 1px 1px 1px 1px;box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);color: #FFFFFF;font-family: arial,helvetica,sans-serif;font-size: 16px;padding: 7px;text-align: center;text-decoration: none;text-shadow: 1px 1px 2px #000000;	cursor: pointer;float:left;width: 120px;}
+table#labelTable,table#deliveriesTable{width: 100%;border: solid;border-color: #CCCCCC;border-width: 1px;color: #4C4C4C;}
+table#deliveriesTable .filter, table#labelTable #labelsFilter{background-color: #595959;background-image: linear-gradient(to bottom, #595959, #262626);border: 1px solid #000000;border-radius: 1px 1px 1px 1px;box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);color: #FFFFFF;font-family: arial,helvetica,sans-serif;font-size: 16px;padding: 7px;text-align: center;text-decoration: none;text-shadow: 1px 1px 2px #000000;	cursor: pointer;float:left;width: 120px;}
 table#deliveriesTable .filter:hover{background-image: linear-gradient(to bottom, #000, #000); background-color: #000;}
-table#deliveriesTable tr th{background-color: #B2B2B2;background-image: none;text-shadow: none;padding: 10px}
-table#deliveriesTable tr.filtros td{background-color: #F2F2F2;}
-table#deliveriesTable tr.bold th{padding: 10px;background-color: #D8D8D8;}
-table#deliveriesTable tr.bold th input{border: 1px solid #CCCCCC;}
-table#deliveriesTable tr td{padding: 10px;border-bottom:1px solid #CCCCCC;background-color: #E5E5E5;color:#4c4c4c}
-table#deliveriesTable tr.alternate td{background-color: #F2F2F2;}
+table#deliveriesTable tr th,table#labelTable tr th{background-color: #B2B2B2;background-image: none;text-shadow: none;padding: 10px}
+table#deliveriesTable tr.filtros td,table#labelTable tr.filtros td{background-color: #F2F2F2;}
+table#deliveriesTable tr.bold th, table#labelTable tr.bold th{padding: 10px;background-color: #D8D8D8;}
+table#deliveriesTable tr.bold th input,table#labelTable tr.bold th input{border: 1px solid #CCCCCC;}
+table#deliveriesTable tr td, table#labelTable tr td{padding: 10px;border-bottom:1px solid #CCCCCC;background-color: #E5E5E5;color:#4c4c4c}
+table#deliveriesTable tr.alternate td, table#labelTable tr.alternate td{background-color: #F2F2F2;}
 table#deliveriesTable tr td.Detalles,table#deliveriesTable tr td.EXPEDICION{text-align: center}
+table#labelTable #start_date_order, table#labelTable #end_date_order{max-width:100px;}
 
 #packing_list table{border: none;width: 350px;margin-left: auto;margin-right: auto;background-color: transparent;}
 #packing_list table tr th{font-size: 24px;line-height: 40px;color: #4C4C4C;font-weight: normal;background-color: transparent;background-image: none;text-align: center;}
@@ -259,6 +252,7 @@ table#deliveriesTable tr td.Detalles,table#deliveriesTable tr td.EXPEDICION{text
 #manual_download {background-image: linear-gradient(to bottom, #595959, #262626);border: 1px solid #000000;border-radius: 1px 1px 1px 1px;box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);color: #FFFFFF;font-family: arial,helvetica,sans-serif;font-size: 16px;padding: 10px;text-align: center;text-decoration: none;text-shadow: 1px 1px 2px #000000;cursor: pointer;width: 120px;padding-left: 10px;line-height: 26px;display: block;margin-left: auto;margin-right: auto;}
 #manual_download:hover{background-color: #000;}
 .lihelp{display: block;font-size: 12px;line-height: 15px;color: #8e8e8e;padding-top: 10px;padding-left: 124px;}
+.configuration_tabs .lihide{display:none;}
 #module_configuration .cols2 .lihelp{padding-left: 239px;clear: both;}
 
 /*marketing*/
@@ -278,8 +272,15 @@ table#deliveriesTable tr td.Detalles,table#deliveriesTable tr td.EXPEDICION{text
 #importantnewuser span{color: #E30613;text-transform: uppercase;font-weight: bold}
 
 #deliveriesTable input.ps14_input {width: 100px;}
+#labelTable input.ps14_input {width: 100px;}
 
 #fichaPedidoSeur div.module_error
 {
 	max-width: 370px;
+}
+#seur_module #labelTable input.button.btnTab
+{
+width:auto;
+display:table;
+margin:0 auto;
 }

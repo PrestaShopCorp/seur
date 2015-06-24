@@ -23,7 +23,8 @@
 *  @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
-<table style="width: 357px;">
+
+<table style="width: 330px;">
         <tr>
             <td style="width: 27px;"></td>
             <td style="background-color: #4d4d4d; color: #ffffff"><strong>{l s='Concept' mod='seurcashondelivery'}</strong></td>

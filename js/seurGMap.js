@@ -61,7 +61,7 @@ $(document).ready(function()
 		check_reembolsoSeur();
 	});
 	$('#id_address_delivery').live('change', function()
-	{
+	{	
 		check_reembolsoSeur();
 	});
 });
@@ -86,6 +86,7 @@ function assignGlobalVariables()
 {
 	bodyid = $('body').attr('id');
 	ps_version = $('#ps_version').val();
+
 	if(ps_version == null)
 	{
 		ps_version = 'ps5';
@@ -308,12 +309,14 @@ function initSeurMaps()
 				(!map.hasClass("showmap") ? map.addClass('showmap').css('position','relative') : "" );
 				if ($('#pos_selected').val() == "false"){
 					$('input[name="processCarrier"]').attr("disabled","disabled");
+					$('button[name="processCarrier"]').attr("disabled","disabled");
 					$('#opc_payment_methods').hide();
 					noSelectedPointInfo.fadeIn();
 				}
 				if ($('#pos_selected').val() == "true")
 				{
 					$('input[name="processCarrier"]').removeAttr("disabled");
+					$('button[name="processCarrier"]').removeAttr("disabled");
 					noSelectedPointInfo.fadeOut();
 					$('#opc_payment_methods').show();
 				}
@@ -324,6 +327,9 @@ function initSeurMaps()
 				$('div.seurMapContainer').remove();
 				$('#noSelectedPointInfo').remove();
 				$('#collectionPointInfo').remove();
+				$('input[name=processCarrier]').removeAttr('disabled');
+				$('button[name=processCarrier]').removeAttr('disabled');
+				
 			}
 		}
 		
@@ -337,6 +343,8 @@ function initSeurMaps()
 			$('div.seurMapContainer').remove();
 			$('#noSelectedPointInfo').remove();
 			$('#collectionPointInfo').remove();
+			$('input[name=processCarrier]').removeAttr('disabled');
+			$('button[name=processCarrier]').removeAttr('disabled');
 		}
 	}
 };
@@ -373,6 +381,7 @@ function saveCollectorPoint(id_cart, post_codeData )
 			$('#pos_selected').val("true");
 			$('#opc_payment_methods').show();
 			$('input[name="processCarrier"]').removeAttr('disabled');
+			$('button[name="processCarrier"]').removeAttr('disabled');
 		},
 		error: function(xhr, ajaxOptions, thrownError)
 		{
@@ -572,12 +581,14 @@ function updateCarrierListOneStep(json)
 			if($('#pos_selected').val() == "false")
 			{
 				$('input[name="processCarrier"]').attr("disabled","disabled");
+				$('button[name="processCarrier"]').attr("disabled","disabled");
 				$('#opc_payment_methods').hide();
 				noSelectedPointInfo.fadeIn();
 			}
 			if($('#pos_selected').val() == "true")
 			{
 				$('input[name="processCarrier"]').removeAttr("disabled");
+				$('button[name="processCarrier"]').removeAttr("disabled");
 				noSelectedPointInfo.fadeOut();
 				$('#opc_payment_methods').show();
 			}
@@ -645,6 +656,8 @@ function newGMap()
 			$('div.seurMapContainer').remove();
 			$('#noSelectedPointInfo').remove();
 			$('#collectionPointInfo').remove();
+			$('input[name=processCarrier]').removeAttr('disabled');
+			$('button[name=processCarrier]').removeAttr('disabled');
 		}
 	});
 }

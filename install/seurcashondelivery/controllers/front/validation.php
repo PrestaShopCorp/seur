@@ -56,31 +56,20 @@ class SeurCashOnDeliveryValidationModuleFrontController extends ModuleFrontContr
 		{
 			$customer = new Customer((int)$this->context->cart->id_customer);
             $coste = (float)(abs($this->context->cart->getOrderTotal(true, Cart::BOTH)));
-<<<<<<< HEAD
             $cart_Amount = number_format($this->module->calculateCartAmount($this->context->cart, false) , 2, '.', '');
             // $vales = (float)(abs($this->context->cart->getOrderTotal(true, Cart::ONLY_DISCOUNTS)));
             $total = $coste;
 		
-=======
-            $cargo = number_format($this->module->getCargo($this->context->cart, false) , 2, '.', '');
-            $vales = (float)(abs($this->context->cart->getOrderTotal(true, Cart::ONLY_DISCOUNTS)));
-            $total = $coste - $vales + $cargo;
-
->>>>>>> upstream/master
 			if(version_compare(_PS_VERSION_, "1.5", "<"))
             {
-                $this->module->validateOrderFORWEBS_v4((int)$this->context->cart->id, Configuration::get('REEMBOLSO_OS_CARGO'), $total, $this->module->displayName, null, array(), null, false, $customer->secure_key);
+           		$this->module->validateOrderFORWEBS_v4((int)$this->context->cart->id, Configuration::get('REEMBOLSO_OS_CARGO'), $total, $this->module->displayName, null, array(), null, false, $customer->secure_key);
             }
             else
             {
                 $this->module->validateOrderFORWEBS_v5((int)$this->context->cart->id, Configuration::get('REEMBOLSO_OS_CARGO'), $total, $this->module->displayName, null, array(), null, false, $customer->secure_key);
             }
-<<<<<<< HEAD
 			$order = new Order($this->module->currentOrder);
 			SeurLib::setSeurOrder((int)$order->id, 1, $order->weight, null,$this->module->calculateCartAmount($this->context->cart),0,(float)$order->total_paid);
-=======
-
->>>>>>> upstream/master
 			Tools::redirectLink(__PS_BASE_URI__.'order-confirmation.php?key='.urlencode($customer->secure_key).'&id_cart='.(int)$this->context->cart->id.'&id_module='.(int)$this->module->id.'&id_order='.(int)$this->module->currentOrder);
 		}
 	}
@@ -94,17 +83,10 @@ class SeurCashOnDeliveryValidationModuleFrontController extends ModuleFrontContr
 		parent::initContent();
 
                 $coste = (float)(abs($this->context->cart->getOrderTotal(true, Cart::BOTH)));
-<<<<<<< HEAD
                 $cart_Amount = number_format($this->module->calculateCartAmount($this->context->cart, false) , 2, '.', '');
                 $vales = (float)(abs($this->context->cart->getOrderTotal(true, Cart::ONLY_DISCOUNTS)));
 
 				$total = $coste + $cart_Amount;
-=======
-                $cargo = number_format($this->module->getCargo($this->context->cart, false) , 2, '.', '');
-                $vales = (float)(abs($this->context->cart->getOrderTotal(true, Cart::ONLY_DISCOUNTS)));
-
-                $total = $coste - $vales + $cargo;
->>>>>>> upstream/master
 
 		$this->context->smarty->assign(array(
 			'coste' => $coste,

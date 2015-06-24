@@ -39,8 +39,8 @@ if ($token != $admin_token)
 
 try
 {
-	$servicio = 31;
-	$producto = 2;
+	$servicio = Configuration::get('SEUR_NACIONAL_SERVICE');
+	$producto = Configuration::get('SEUR_NACIONAL_PRODUCT');
 	$serviciosComplementarios = '';
 
 	$iso = Tools::getValue('iso');
@@ -48,7 +48,14 @@ try
 
 	if (Tools::isSubmit('reembolso') && (in_array($iso, $iso_list) == true))
 		$serviciosComplementarios = '30;P;'.Tools::getValue('reembolso');
-
+		
+		
+	if (SeurLib::getConfigurationField('international_orders') == 1 && in_array($iso, $iso_list))
+	{
+        $servicio = Configuration::get('SEUR_INTERNACIONAL_SERVICE');
+        $producto = Configuration::get('SEUR_INTERNACIONAL_PRODUCT');		
+	}	
+		
 	if (Tools::isSubmit('cod_centro') && (in_array($iso, $iso_list) == true))
 	{
 		$servicio = 1;

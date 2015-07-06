@@ -736,7 +736,7 @@ class Seur extends CarrierModule
 		
 		if (!Configuration::get('SEUR_Configured') && !$id_email_language)
 		{
-			$this->displayWarning();
+			$this->displayWarningSeur();
 			$this->context->smarty->assign(array(
 				'email_warning_message' => $this->l('Email template is missing'),
 				'module_instance' => $this
@@ -746,7 +746,7 @@ class Seur extends CarrierModule
 		return $this->context->smarty->fetch((version_compare(_PS_VERSION_, '1.5', '<') ? _PS_MODULE_DIR_.$this->name.'/' : $this->local_path).'views/templates/admin/template.tpl');
 	}
 	
-	public function displayWarning()
+	public function displayWarningSeur()
 	{
 		if (version_compare(_PS_VERSION_, '1.5', '<'))
 			$this->context->smarty->assign('ps_14', true);
@@ -792,7 +792,7 @@ class Seur extends CarrierModule
 			ImageManager::resize(_PS_MODULE_DIR_.'seur/img/logonew.png', _PS_MODULE_DIR_.'seur/img/logonew_32.png', 32, 32, 'png');
 		if (version_compare(_PS_VERSION_, '1.5', '<'))
 			$versionSpecialClass = 'ver14';
-		$this->displayWarning();
+		$this->displayWarningSeur();
 		if (Configuration::get('SEUR_Configured') == 1)
 		{
 			$cookie = $this->context->cookie;

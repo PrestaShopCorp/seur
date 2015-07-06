@@ -746,7 +746,7 @@ class Seur extends CarrierModule
 		return $this->context->smarty->fetch((version_compare(_PS_VERSION_, '1.5', '<') ? _PS_MODULE_DIR_.$this->name.'/' : $this->local_path).'views/templates/admin/template.tpl');
 	}
 	
-	private function displayWarning()
+	public function displayWarning()
 	{
 		if (version_compare(_PS_VERSION_, '1.5', '<'))
 			$this->context->smarty->assign('ps_14', true);

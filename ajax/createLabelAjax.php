@@ -38,7 +38,7 @@ if (!class_exists('Pickup')) include(_PS_MODULE_DIR_ . 'seur/classes/Pickup.php'
 $order_data = (array) $_GET;
 
 if (Tools::getValue('token') != Tools::getAdminToken('AdminOrders' . (int) (Tab::getIdFromClassName('AdminOrders')) . (int) (Tools::getValue('id_employee'))))
-    Tools::display404Error();
+    Controller::getController('PageNotFoundController')->run();
 
 try {
 	//*

@@ -37,7 +37,6 @@ class AdminSeur15Controller extends ModuleAdminController {
 	public function __construct()
 	{
 		parent::__construct();
-		$this->module = Module::getInstanceByName('seur');
 	}
 	
 	public function initContent()

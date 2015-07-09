@@ -311,7 +311,7 @@ class SeurCashOnDelivery extends PaymentModule{
 
 		if ((int)$order->id >0)
 		{
-			$sql = 'SELECT codfee FROM '._DB_PREFIX_.'seur_order WHERE id_order='.$order->id;
+			$sql = 'SELECT codfee FROM '._DB_PREFIX_.'seur_order WHERE id_order='.(int)$order->id;
 			
 			return (float)Tools::ps_round((float)(float)DB::getInstance()->getValue($sql), 2);
 		}
@@ -321,7 +321,7 @@ class SeurCashOnDelivery extends PaymentModule{
 	{
 		if ((int)$order->id >0)
 		{
-			$sql = 'SELECT total_paid FROM '._DB_PREFIX_.'seur_order WHERE id_order='.$order->id;
+			$sql = 'SELECT total_paid FROM '._DB_PREFIX_.'seur_order WHERE id_order='.(int)$order->id;
 			
 			return (float)Tools::ps_round((float)(float)DB::getInstance()->getValue($sql), 2);
 		}
@@ -331,7 +331,7 @@ class SeurCashOnDelivery extends PaymentModule{
 	{
 		if ((int)$order->id >0)
 		{
-			$sql = 'UPDATE '._DB_PREFIX_.'seur_order SET total_paid = '.$total_paid.' WHERE id_order='.$order->id;
+			$sql = 'UPDATE '._DB_PREFIX_.'seur_order SET total_paid = '.$total_paid.' WHERE id_order='.(int)$order->id;
 			Db::getInstance()->execute($sql);
 		}
 	}	

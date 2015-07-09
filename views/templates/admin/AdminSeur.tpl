@@ -102,7 +102,7 @@
 									{if $errors}									
 										<div class="bootstrap">
 											<div class="module_error alert alert-danger">
-												<button data-dismiss="alert" class="close" type="button">×</button>
+												<button data-dismiss="alert" class="close" type="button">Ã—</button>
 												{$errors|escape:'htmlall':'UTF-8'}
 											</div>
 										</div>
@@ -152,7 +152,7 @@
 					{foreachelse}
 					<div class="bootstrap">
 						<div class="module_error alert alert-danger">
-							<button data-dismiss="alert" class="close" type="button">×</button>
+							<button data-dismiss="alert" class="close" type="button">Ã—</button>
 							{l s='No result' mod='seur'}
 						</div>
 					</div>

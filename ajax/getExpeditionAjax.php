@@ -79,7 +79,7 @@ try
 	$delivery = $xml->EXPEDICION;
 
 	$context = Context::getContext();
-	$context->smarty->assign('delivery', $delivery);
+	$context->smarty->assign('delivery', get_object_vars($delivery));
 	$context->smarty->display(_PS_MODULE_DIR_.'seur/views/templates/admin/get_expedition.tpl');
 }
 catch (PrestaShopException $e)

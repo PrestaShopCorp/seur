@@ -70,7 +70,8 @@ class Expedition
 		}
 		catch (PrestaShopException $e)
 		{
-			$e->displayMessage();
+			//$e->displayMessage();
+			return false;
 		}
 
 		return $response;

@@ -108,7 +108,8 @@ class User
 		}
 		catch (PrestaShopException $e)
 		{
-			$e->displayMessage();
+			//$e->displayMessage();
+			return false;
 		}
 
 		$ccc = explode('-', $ccc);

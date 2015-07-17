@@ -63,7 +63,8 @@ class Town
 		}
 		catch (PrestaShopException $e)
 		{
-			$e->displayMessage();
+			//$e->displayMessage();
+			return false;
 		}
 	}
 }

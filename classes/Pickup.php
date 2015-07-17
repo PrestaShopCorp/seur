@@ -160,7 +160,8 @@ class Pickup extends ObjectModel
 			}
 			catch (PrestaShopException $e)
 			{
-				$e->displayMessage();
+				//$e->displayMessage();
+				return false;
 			}
 		}
 		else

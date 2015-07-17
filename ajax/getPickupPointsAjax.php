@@ -108,7 +108,8 @@ if (Tools::getValue('id_address_delivery'))
 	}
 	catch (PrestaShopException $e)
 	{
-		$e->displayMessage();
+		//$e->displayMessage();
+		return false;
 	}
 }
 

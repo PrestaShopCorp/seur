@@ -111,6 +111,11 @@ if (Tools::getValue('id_address_delivery'))
 		//$e->displayMessage();
 		return false;
 	}
+	catch (SoapFault $e)
+	{
+    		//$e->displayMessage();
+		return false;
+	}
 }
 
 if (Tools::getValue('usr_id_address'))

@@ -111,6 +111,11 @@ class User
 			//$e->displayMessage();
 			return false;
 		}
+		catch (SoapFault $e)
+		{
+    			//$e->displayMessage();
+    			return false;
+		}
 
 		$ccc = explode('-', $ccc);
 

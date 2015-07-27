@@ -73,6 +73,12 @@ $(document).ready(function(){
     
     var radio_international_orders = $('input[name="international_orders"]',configuration_form);
     var message_international_orders_li = $('li#message_international_orders',configuration_form);
+	
+    var message_service_nacional_orders_li = $('li#message_service_nacional_orders',configuration_form);
+    var message_product_nacional_orders_li = $('li#message_product_nacional_orders',configuration_form);
+
+    var message_service_internacional_orders_li = $('li#message_service_internacional_orders',configuration_form);
+    var message_product_internacional_orders_li = $('li#message_product_internacional_orders',configuration_form);	
     
     var radio_seur_cod = $('input[name="seur_cod"]', configuration_form);
     var seur_cod_configuration_li = $('li#seur_cod_configuration', configuration_form);
@@ -224,11 +230,15 @@ $(document).ready(function(){
     {
             if( $(this).val() == '1' )
             {
-                    message_international_orders_li.animate( { "opacity" : "1" }, "fast" );
+                    message_international_orders_li.animate( { "opacity" : "1" }, "fast" );					
+					message_service_internacional_orders_li.show().animate( { "opacity" : "1" }, "fast" );
+					message_product_internacional_orders_li.show().animate( { "opacity" : "1" }, "fast" );					
             }
             else
             {
-                    message_international_orders_li.animate( { "opacity" : "0" }, "fast" );
+                    message_international_orders_li.animate( { "opacity" : "0" }, "fast" );					
+					message_service_internacional_orders_li.hide().animate( { "opacity" : "0" }, "fast" );
+					message_product_internacional_orders_li.hide().animate( { "opacity" : "0" }, "fast" );				
             }
     });
     

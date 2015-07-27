@@ -257,20 +257,20 @@ class SeurLib
 			);
 	}
 
-	public static function setSeurOrder($id_order, $bultos, $peso, $imprimido = false)
+	public static function setSeurOrder($id_order, $bultos, $peso, $imprimido = false,$codfee = null, $id_address_delivery = 0, $total_paid = 0)
 	{
 		$exists = self::getSeurOrder($id_order);
-
+	
 		if ($exists)
 			return Db::getInstance()->Execute('
 				UPDATE '._DB_PREFIX_.'seur_order
-				SET `peso_bultos`='.(float)$peso.', `numero_bultos`='.(int)($bultos.( $imprimido ? ',`imprimido` ="'.$imprimido.'"' : ' ')).'
+				SET `peso_bultos`='.(float)$peso.', `numero_bultos`='.(int)($bultos.( $imprimido ? ',`imprimido` ="'.$imprimido.'"' : ' ')).(($codfee!=null)?',  `codfee`='.(float)$codfee:'').(($total_paid!=0)?' ,  `total_paid`='.(float)$total_paid:'').'
 				WHERE `id_order` ='.(int)$id_order
 				);
 		else
 			return Db::getInstance()->Execute('
-				INSERT INTO `'._DB_PREFIX_.'seur_order`
-				VALUES ('.(int)$id_order.','.(int)$bultos.','.(float)$peso.',null, 0, 0, "");'
+				INSERT INTO `'._DB_PREFIX_.'seur_order` (id_order, numero_bultos, peso_bultos, imprimido, printed_label, printed_pdf, codfee, id_address_delivery,total_paid) 
+				VALUES ('.(int)$id_order.','.(int)$bultos.','.(float)$peso.',null, 0, 0, '.(float)$codfee .','.(int)$id_address_delivery.','.(float)$total_paid .');'
 				);
 	}
 

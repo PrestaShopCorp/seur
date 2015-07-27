@@ -32,7 +32,7 @@ if (class_exists('SeurLib') == false)
 	include_once(_PS_MODULE_DIR_.'seur/classes/SeurLib.php');
 
 $token = Tools::getValue('token');
-$admin_token = Tools::getAdminToken('AdminSeur'.(int)Tab::getIdFromClassName('AdminSeur').(int)Tools::getValue('id_employee'));
+$admin_token = Tools::getAdminToken('AdminSeur15'.(int)Tab::getIdFromClassName('AdminSeur15').(int)Tools::getValue('id_employee'));
 
 if ($token != $admin_token)
 	exit;
@@ -79,10 +79,16 @@ try
 	$delivery = $xml->EXPEDICION;
 
 	$context = Context::getContext();
-	$context->smarty->assign('delivery', $delivery);
+	$context->smarty->assign('delivery', get_object_vars($delivery));
 	$context->smarty->display(_PS_MODULE_DIR_.'seur/views/templates/admin/get_expedition.tpl');
 }
 catch (PrestaShopException $e)
 {
-	$e->displayMessage();
+	//$e->displayMessage();
+	return false;
+}
+catch (SoapFault $e)
+{
+    //$e->displayMessage();
+    return false;
 }

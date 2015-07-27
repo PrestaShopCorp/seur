@@ -494,7 +494,6 @@ class Range extends ObjectModel
 		return true;
 	}
 
-
 	private static function createDefaultRanges()
 	{
 		$ids_ranges_seur = array();

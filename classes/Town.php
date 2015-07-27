@@ -43,7 +43,7 @@ class Town
 			$data = array(
 				'in0' => '',
 				'in1' => '',
-				'in2' => $postal_code,
+				'in2' => str_pad($postal_code, 4, '0', STR_PAD_LEFT),
 				'in3' => '',
 				'in4' => '',
 				'in5' => Configuration::get('SEUR_WS_USERNAME'),
@@ -63,7 +63,13 @@ class Town
 		}
 		catch (PrestaShopException $e)
 		{
-			$e->displayMessage();
+			//$e->displayMessage();
+			return false;
+		}
+		catch (SoapFault $e)
+		{
+    			//$e->displayMessage();
+    			return false;
 		}
 	}
 }

@@ -64,13 +64,19 @@ class Expedition
 			);
 			
 			$response = $soap_client->consultaListadoExpedicionesStr($data);
-
+			
 			if (empty($response->out))
 				return false;
 		}
 		catch (PrestaShopException $e)
 		{
-			$e->displayMessage();
+			//$e->displayMessage();
+			return false;
+		}
+		catch (SoapFault $e)
+		{
+    			//$e->displayMessage();
+    			return false;
 		}
 
 		return $response;

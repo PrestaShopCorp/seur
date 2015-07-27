@@ -49,7 +49,7 @@
                 {l s='The total of your order is:' mod='seurcashondelivery'}
                 <span id="amount_coste" class="price">{convertPrice price=$coste|floatval}</span><br /><br />
                 {l s='The total fee is:' mod='seurcashondelivery'}
-                <span id="amount_cargo" class="price">{convertPrice price=$cargo|floatval}</span><br /><br />
+                <span id="amount_cargo" class="price">{convertPrice price=$cart_Amount|floatval}</span><br /><br />
                 {l s='The total amount is:' mod='seurcashondelivery'}
                 <span id="amount_total" class="price">{convertPrice price=$total|floatval}</span>
         </p>

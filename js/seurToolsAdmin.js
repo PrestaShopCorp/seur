@@ -33,6 +33,7 @@ $(document).ready(function(){
     $('li[id="deliveries"]', configuration_tabs).fadeIn('fast');
     $('li[id="packing_list"]', configuration_tabs).fadeOut('fast');
     $('li[id="pickups"]', configuration_tabs).fadeOut('fast');
+    $('li[id="label"]', configuration_tabs).fadeOut('fast');
     
     $('li', configuration_menu).click(function() 
     {

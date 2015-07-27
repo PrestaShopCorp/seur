@@ -67,7 +67,7 @@ if (Tools::getValue('id_address_delivery'))
 		$soap_client = new SoapClient((string)Configuration::get('SEUR_URLWS_SP'), $sc_options);
 		$xml = '
 			<CAMPOS>
-				<CODIGO_POSTAL>'.(int)$address_delivery->postcode.'</CODIGO_POSTAL>
+				<CODIGO_POSTAL>'.str_pad($address_delivery->postcode, 4, '0', STR_PAD_LEFT).'</CODIGO_POSTAL>
 				<NOM_CORTO></NOM_CORTO>
 				<LATITUD></LATITUD>
 				<LONGITUD></LONGITUD>
@@ -108,7 +108,13 @@ if (Tools::getValue('id_address_delivery'))
 	}
 	catch (PrestaShopException $e)
 	{
-		$e->displayMessage();
+		//$e->displayMessage();
+		return false;
+	}
+	catch (SoapFault $e)
+	{
+    		//$e->displayMessage();
+		return false;
 	}
 }
 

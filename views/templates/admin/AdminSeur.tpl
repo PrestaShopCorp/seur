@@ -207,7 +207,7 @@
 					{elseif date('H')|intval < 14 && !$steady_pickup}
 							<tr>
 								<td class="createpickup">
-									<a href="&createPickup=1">{l s='Create pickup' mod='seur'}</a>
+									<a href="index.php?controller=AdminSeur15&createPickup=1&token={$token|escape:'htmlall':'UTF-8'}{$ps14_tab|escape:'htmlall':'UTF-8'}">{l s='Create pickup' mod='seur'}</a>
 								</td>
 							</tr>
 					{elseif $steady_pickup}

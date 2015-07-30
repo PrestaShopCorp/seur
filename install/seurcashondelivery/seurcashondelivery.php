@@ -1,6 +1,6 @@
 <?php
 /**
-* 2007-2014 PrestaShop
+* 2007-2015 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -19,7 +19,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author    PrestaShop SA <contact@prestashop.com>
-*  @copyright 2007-2014 PrestaShop SA
+*  @copyright 2007-2015 PrestaShop SA
 *  @version  Release: 0.4.4
 *  @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
@@ -37,7 +37,7 @@ class SeurCashOnDelivery extends PaymentModule{
 
 		$this->name = 'seurcashondelivery';
 		$this->tab = 'payments_gateways';
-		$this->version = '1.3';
+		$this->version = '1.3.1';
 		$this->author = 'www.lineagrafica.es';
 
 		$this->currencies = true;

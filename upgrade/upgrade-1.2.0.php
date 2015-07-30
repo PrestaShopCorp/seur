@@ -63,48 +63,48 @@ function upgrade_module_1_2_0($module)
 		Db::getInstance()->execute($sql);
 	}	
 	
-	uninstallSeurCashOnDelivery();
-	installSeurCashOnDelivery();
+	uninstallSeurCashOnDelivery2();
+	installSeurCashOnDelivery2();
     
 	return $module;
 }
 
-function uninstallSeurCashOnDelivery()
+function uninstallSeurCashOnDelivery2()
 {	
 	if ($module = Module::getInstanceByName('seurcashondelivery'))
 	{
 		$module_dir = _PS_MODULE_DIR_.str_replace(array('.', '/', '\\'), array('', '', ''), $module->name);
-		recursiveDeleteOnDisk($module_dir);
+		recursiveDeleteOnDisk2($module_dir);
 	}
 		
 	return true;
 }
 
-function installSeurCashOnDelivery()
+function installSeurCashOnDelivery2()
 {
-	if (moveFiles())
+	if (moveFiles2())
 		return true;
 		
 	return false;
 }
 
-function moveFiles()
+function moveFiles2()
 {
 	if (!is_dir(_PS_MODULE_DIR_.'seurcashondelivery'))
 	{
 		$module_dir = _PS_MODULE_DIR_.str_replace(array('.', '/', '\\'), array('', '', ''), 'seurcashondelivery');
-		recursiveDeleteOnDisk($module_dir);
+		recursiveDeleteOnDisk2($module_dir);
 	}
 	$dir = _PS_MODULE_DIR_.'seur/install/seurcashondelivery';
 	if (!is_dir($dir))
 		return false;
 
-	copyDirectory($dir, _PS_MODULE_DIR_.'seurcashondelivery');
+	copyDirectory2($dir, _PS_MODULE_DIR_.'seurcashondelivery');
 
 	return true;
 }
 
-function copyDirectory($source, $target)
+function copyDirectory2($source, $target)
 {
 	if (!is_dir($source))
 	{
@@ -123,12 +123,12 @@ function copyDirectory($source, $target)
 
 		$s = "$source/$file_entry";
 		$t = "$target/$file_entry";
-		copyDirectory($s, $t);
+		copyDirectory2($s, $t);
 	}
 	$d->close();
 }
 
-function recursiveDeleteOnDisk($dir)
+function recursiveDeleteOnDisk2($dir)
 {
 	if (strpos(realpath($dir), realpath(_PS_MODULE_DIR_)) === false)
 		return;
@@ -139,7 +139,7 @@ function recursiveDeleteOnDisk($dir)
 			if ($object != '.' && $object != '..')
 			{
 				if (filetype($dir.'/'.$object) == 'dir')
-					recursiveDeleteOnDisk($dir.'/'.$object);
+					recursiveDeleteOnDisk2($dir.'/'.$object);
 				else
 					unlink($dir.'/'.$object);
 			}

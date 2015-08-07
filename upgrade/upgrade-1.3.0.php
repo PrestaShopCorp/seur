@@ -27,6 +27,8 @@
 if (!defined('_PS_VERSION_'))
 	exit;
 
+require_once(_PS_MODULE_DIR_.'seur/AdminSeur.php');
+
 function upgrade_module_1_3_0($module)
 {
 	 
@@ -63,89 +65,10 @@ function upgrade_module_1_3_0($module)
 		Db::getInstance()->execute($sql);
 	}	
 	
-	uninstallSeurCashOnDelivery3();
-	installSeurCashOnDelivery3();
+	AdminSeur::uninstallSeurCashOnDelivery();
+	AdminSeur::installSeurCashOnDelivery();
     
 	return $module;
-}
-
-function uninstallSeurCashOnDelivery3()
-{	
-	if ($module = Module::getInstanceByName('seurcashondelivery'))
-	{
-		$module_dir = _PS_MODULE_DIR_.str_replace(array('.', '/', '\\'), array('', '', ''), $module->name);
-		recursiveDeleteOnDisk3($module_dir);
-	}
-		
-	return true;
-}
-
-function installSeurCashOnDelivery3()
-{
-	if (moveFiles3())
-		return true;
-		
-	return false;
-}
-
-function moveFiles3()
-{
-	if (!is_dir(_PS_MODULE_DIR_.'seurcashondelivery'))
-	{
-		$module_dir = _PS_MODULE_DIR_.str_replace(array('.', '/', '\\'), array('', '', ''), 'seurcashondelivery');
-		recursiveDeleteOnDisk3($module_dir);
-	}
-	$dir = _PS_MODULE_DIR_.'seur/install/seurcashondelivery';
-	if (!is_dir($dir))
-		return false;
-
-	copyDirectory3($dir, _PS_MODULE_DIR_.'seurcashondelivery');
-
-	return true;
-}
-
-function copyDirectory3($source, $target)
-{
-	if (!is_dir($source))
-	{
-		copy($source, $target);
-		return null;
-	}
-
-	@mkdir($target);
-	chmod($target, 0755);
-	$d = dir($source);
-	$nav_folders = array('.', '..');
-	while (false !== ($file_entry = $d->read() ))
-	{
-		if (in_array($file_entry, $nav_folders))
-			continue;
-
-		$s = "$source/$file_entry";
-		$t = "$target/$file_entry";
-		copyDirectory3($s, $t);
-	}
-	$d->close();
-}
-
-function recursiveDeleteOnDisk3($dir)
-{
-	if (strpos(realpath($dir), realpath(_PS_MODULE_DIR_)) === false)
-		return;
-	if (is_dir($dir))
-	{
-		$objects = scandir($dir);
-		foreach ($objects as $object)
-			if ($object != '.' && $object != '..')
-			{
-				if (filetype($dir.'/'.$object) == 'dir')
-					recursiveDeleteOnDisk3($dir.'/'.$object);
-				else
-					unlink($dir.'/'.$object);
-			}
-		reset($objects);
-		rmdir($dir);
-	}
 }
 
 ?>

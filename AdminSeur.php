@@ -1,6 +1,6 @@
 <?php
 /**
-* 2007-2014 PrestaShop
+* 2007-2015 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -19,7 +19,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author    PrestaShop SA <contact@prestashop.com>
-*  @copyright 2007-2014 PrestaShop SA
+*  @copyright 2007-2015 PrestaShop SA
 *  @version  Release: 0.4.4
 *  @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
@@ -788,5 +788,82 @@ class AdminSeur extends AdminTab {
 	}
 	
 	
+	public static function uninstallSeurCashOnDelivery()
+	{	
+		if ($module = Module::getInstanceByName('seurcashondelivery'))
+		{
+			$module_dir = _PS_MODULE_DIR_.str_replace(array('.', '/', '\\'), array('', '', ''), $module->name);
+			AdminSeur::recursiveDeleteOnDisk($module_dir);
+		}
+			
+		return true;
+	}
 	
+	public static function installSeurCashOnDelivery()
+	{
+		if (AdminSeur::moveFiles())
+			return true;
+			
+		return false;
+	}
+
+	public static function moveFiles()
+	{
+		if (!is_dir(_PS_MODULE_DIR_.'seurcashondelivery'))
+		{
+			$module_dir = _PS_MODULE_DIR_.str_replace(array('.', '/', '\\'), array('', '', ''), 'seurcashondelivery');
+			AdminSeur::recursiveDeleteOnDisk($module_dir);
+		}
+		$dir = _PS_MODULE_DIR_.'seur/install/seurcashondelivery';
+		if (!is_dir($dir))
+			return false;
+
+		AdminSeur::copyDirectory($dir, _PS_MODULE_DIR_.'seurcashondelivery');
+
+		return true;
+	}
+
+	public static function copyDirectory($source, $target)
+	{
+		if (!is_dir($source))
+		{
+			copy($source, $target);
+			return null;
+		}
+
+		@mkdir($target);
+		chmod($target, 0755);
+		$d = dir($source);
+		$nav_folders = array('.', '..');
+		while (false !== ($file_entry = $d->read() ))
+		{
+			if (in_array($file_entry, $nav_folders))
+				continue;
+
+			$s = "$source/$file_entry";
+			$t = "$target/$file_entry";
+			AdminSeur::copyDirectory($s, $t);
+		}
+		$d->close();
+	}
+
+	public static function recursiveDeleteOnDisk($dir)
+	{
+		if (strpos(realpath($dir), realpath(_PS_MODULE_DIR_)) === false)
+			return;
+		if (is_dir($dir))
+		{
+			$objects = scandir($dir);
+			foreach ($objects as $object)
+				if ($object != '.' && $object != '..')
+				{
+					if (filetype($dir.'/'.$object) == 'dir')
+						AdminSeur::recursiveDeleteOnDisk($dir.'/'.$object);
+					else
+						unlink($dir.'/'.$object);
+				}
+			reset($objects);
+			rmdir($dir);
+		}
+	}
 }

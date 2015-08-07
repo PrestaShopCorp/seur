@@ -44,7 +44,7 @@
 					<img src="{$img_dir|escape:'htmlall':'UTF-8'}/logonew.png" />
 			 	</legend>
 				<div id="downloadmanual-seur">
-					<a id="manual_download" href="{$ps_base_uri|escape:'url':'UTF-8'}seur/manual/seur_manual.pdf" target="_blank" >
+					<a id="manual_download" href="/modules/seur/manual/seur_manual.pdf" target="_blank" >
 						<img src="{$img_path|escape:'htmlall':'UTF-8'}ico_descargar.png" alt="{l s='Manual' mod='seur'}" /> {l s='Manual' mod='seur'}
 					</a>
 				</div>

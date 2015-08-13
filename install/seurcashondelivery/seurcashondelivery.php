@@ -37,7 +37,7 @@ class SeurCashOnDelivery extends PaymentModule{
 
 		$this->name = 'seurcashondelivery';
 		$this->tab = 'payments_gateways';
-		$this->version = '1.3';
+		$this->version = '1.3.1';
 		$this->author = 'www.lineagrafica.es';
 
 		$this->currencies = true;

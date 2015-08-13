@@ -29,41 +29,19 @@ if (!defined('_PS_VERSION_'))
 
 require_once(_PS_MODULE_DIR_.'seur/AdminSeur.php');
 
-function upgrade_module_1_2_0($module)
+function upgrade_module_1_3_1($module)
 {
-	 
-	$fields = DB::getInstance()->executeS('DESCRIBE '._DB_PREFIX_.'seur_order');
-	if (is_array($fields))
-		foreach($fields as $field)
-			$field_installed[] = $field['Field'];
+	if(!Configuration::get('SEUR_NACIONAL_SERVICE'))
+		Configuration::updateValue('SEUR_NACIONAL_SERVICE', '031');
 	
+	if(!Configuration::get('SEUR_NACIONAL_PRODUCT'))
+		Configuration::updateValue('SEUR_NACIONAL_PRODUCT', '002');
 	
-	if (!in_array('printed_pdf',$field_installed))
-	{
-		$sql='ALTER TABLE '._DB_PREFIX_.'seur_order ADD printed_pdf int(1) NOT NULL DEFAULT 1';
-		Db::getInstance()->execute($sql);
-	}
-    
-	if (!in_array('printed_label',$field_installed))
-	{
-		$sql='ALTER TABLE '._DB_PREFIX_.'seur_order ADD printed_label int(1) NOT NULL DEFAULT 1';
-		Db::getInstance()->execute($sql);
-	} 
-	if (!in_array('codfee',$field_installed))
-	{
-		$sql='ALTER TABLE '._DB_PREFIX_.'seur_order ADD codfee decimal(13,6)';
-		Db::getInstance()->execute($sql);
-	}
-    if (!in_array('id_address_delivery',$field_installed))
-	{
-		$sql='ALTER TABLE '._DB_PREFIX_.'seur_order ADD id_address_delivery int(11) NOT NULL';
-		Db::getInstance()->execute($sql);
-	}
-    if (!in_array('total_paid',$field_installed))
-	{
-		$sql='ALTER TABLE '._DB_PREFIX_.'seur_order ADD total_paid decimal(20,6) NOT NULL DEFAULT 0';
-		Db::getInstance()->execute($sql);
-	}	
+	if(!Configuration::get('SEUR_INTERNACIONAL_SERVICE'))
+		Configuration::updateValue('SEUR_INTERNACIONAL_SERVICE', '077');
+	
+	if(!Configuration::get('SEUR_INTERNACIONAL_PRODUCT'))
+		Configuration::updateValue('SEUR_INTERNACIONAL_PRODUCT', '070');
 	
 	AdminSeur::uninstallSeurCashOnDelivery();
 	AdminSeur::installSeurCashOnDelivery();

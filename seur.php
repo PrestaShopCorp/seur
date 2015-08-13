@@ -52,7 +52,7 @@ class Seur extends CarrierModule
 	public function __construct()
 	{
 		$this->name = 'seur';
-		$this->version = '1.3';
+		$this->version = '1.3.1';
 		$this->author = 'www.lineagrafica.es';
 		$this->need_instance = 0;
 		$this->tab = 'shipping_logistics';

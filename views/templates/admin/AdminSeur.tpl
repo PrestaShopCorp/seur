@@ -44,7 +44,7 @@
 					<img src="{$img_dir|escape:'htmlall':'UTF-8'}/logonew.png" />
 			 	</legend>
 				<div id="downloadmanual-seur">
-					<a id="manual_download" href="/modules/seur/manual/seur_manual.pdf" target="_blank" >
+					<a id="manual_download" href="{$ps_base_uri}seur/manual/seur_manual.pdf" target="_blank" >
 						<img src="{$img_path|escape:'htmlall':'UTF-8'}ico_descargar.png" alt="{l s='Manual' mod='seur'}" /> {l s='Manual' mod='seur'}
 					</a>
 				</div>
@@ -102,7 +102,7 @@
 									{if $errors}									
 										<div class="bootstrap">
 											<div class="module_error alert alert-danger">
-												<button data-dismiss="alert" class="close" type="button">Ã—</button>
+												<button data-dismiss="alert" class="close" type="button">×</button>
 												{$errors|escape:'htmlall':'UTF-8'}
 											</div>
 										</div>
@@ -134,12 +134,12 @@
 								{assign var='delivered' value=true}
 							{/if}
 							{if $key eq 'EXPEDICION' && ($countryTo eq 'ES' || $countryTo eq '-' || $countryTo eq '') && $delivered}
-								<a href="/modules/seur/ajax/createDeliveryNote.php?back={$back|escape:'htmlall':'UTF-8'}&amp;token={Tools::getValue('token')}&expedition_number={$delivery_value|escape:'htmlall':'UTF-8'}&amp;token={$token|escape:'htmlall':'UTF-8'}&id_employee={$id_employee|escape:'htmlall':'UTF-8'}">
+								<a href="{$ps_base_uri}seur/ajax/createDeliveryNote.php?back={$back|escape:'htmlall':'UTF-8'}&amp;token={Tools::getValue('token')}&expedition_number={$delivery_value|escape:'htmlall':'UTF-8'}&amp;token={$token|escape:'htmlall':'UTF-8'}&id_employee={$id_employee|escape:'htmlall':'UTF-8'}">
 										<img src="{$img_dir|escape:'htmlall':'UTF-8'}/png_ico.png" alt="{l s='Delivery' mod='seur'}" title="{l s='Delivery' mod='seur'}" />
 								</a>
 							{/if}
 							 {if $key eq 'Detalles'}
-								<a class="verDetalles" href="/modules/seur/ajax/getExpeditionAjax.php?expedition_number={$delivery_number|escape:'htmlall':'UTF-8'}&token={$token|escape:'htmlall':'UTF-8'}&id_employee={$id_employee|escape:'htmlall':'UTF-8'}">
+								<a class="verDetalles" href="{$ps_base_uri}seur/ajax/getExpeditionAjax.php?expedition_number={$delivery_number|escape:'htmlall':'UTF-8'}&token={$token|escape:'htmlall':'UTF-8'}&id_employee={$id_employee|escape:'htmlall':'UTF-8'}">
 										<img src="{$img_dir|escape:'htmlall':'UTF-8'}/details.png" alt="{l s='See details' mod='seur'}" title="{l s='See details' mod='seur'}" />
 									</a>
 							{/if}
@@ -152,7 +152,7 @@
 					{foreachelse}
 					<div class="bootstrap">
 						<div class="module_error alert alert-danger">
-							<button data-dismiss="alert" class="close" type="button">Ã—</button>
+							<button data-dismiss="alert" class="close" type="button">×</button>
 							{l s='No result' mod='seur'}
 						</div>
 					</div>
@@ -174,7 +174,7 @@
 				<tbody>
 					<tr>
 						<td>
-							<a href="../modules/seur/ajax/createPackingList.php?back={$back|escape:'htmlall':'UTF-8'}&token={$token|escape:'htmlall':'UTF-8'}&id_employee={$id_employee|escape:'htmlall':'UTF-8'}" target="_blank">
+							<a href="{$ps_base_uri}seur/ajax/createPackingList.php?back={$back|escape:'htmlall':'UTF-8'}&token={$token|escape:'htmlall':'UTF-8'}&id_employee={$id_employee|escape:'htmlall':'UTF-8'}" target="_blank">
 							<img src="{$img_dir|escape:'htmlall':'UTF-8'}/ico_descargar.png" alt="{l s='Packing List' mod='seur'}" />{l s='Download' mod='seur'}</a>
 						</td>
 					</tr>

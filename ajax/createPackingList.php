@@ -75,7 +75,7 @@ try
 		$pdf = base64_decode($response->out);
 		ob_end_clean();
 		header('Content-type: application/pdf');
-		header('Content-Disposition: inline; filename="manifiesto_'.date('d-m-Y').'".pdf"');
+		header('Content-Disposition: inline; filename="manifiesto_'.date('d-m-Y').'.pdf"');
 		echo $pdf;
 	}
 }

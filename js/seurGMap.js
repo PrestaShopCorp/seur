@@ -279,7 +279,7 @@ function initSeurMaps()
 		// if one step checkout and ps5
 		if(bodyid == 'order-opc' && ps_version == 'ps5')
 		{
-			carrier_value = $('.delivery_option_radio').attr('name');
+			carrier_value = $('.delivery_option_radio:checked').attr('name');
 			str = carrier_value;
 			cad_string = str.substring(str.indexOf('[') + 1,str.indexOf(']'));
 			// set value of onchange

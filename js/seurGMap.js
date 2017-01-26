@@ -360,7 +360,7 @@ function saveCollectorPoint(id_cart, post_codeData )
 	
 	$.ajax({
 		url: baseDir+'modules/seur/ajax/getPickupPointsAjax.php',
-		type: 'GET',
+		type: 'POST',
 		data: {
 			savepos : true,
 			id_cart : encodeURIComponent(id_cart),
@@ -614,7 +614,7 @@ function getUserAddress(idAddress)
 	address = "";
 	$.ajax({
 		url: baseDir+'modules/seur/ajax/getPickupPointsAjax.php',
-		type: 'GET',
+		type: 'POST',
 		data: {
 			usr_id_address : encodeURIComponent(idAddress),
 			token : encodeURIComponent(current_token)
@@ -672,7 +672,7 @@ function getSeurCollectionPoints()
 	points = false;
 	$.ajax({
 		url: baseDir+'modules/seur/ajax/getPickupPointsAjax.php',
-		type: 'GET',
+		type: 'POST',
 		data: {
 			id_address_delivery : encodeURIComponent(id_address_delivery.val()),
 			token : encodeURIComponent(current_token)
